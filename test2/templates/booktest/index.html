@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图书信息</title>
+</head>
+<body>
+<div>
+    <a href="/create">新增数据</a>
+    <ul>
+        {% for book in books %}
+            <li>{{book.btitle}}</li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>
