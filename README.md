@@ -328,7 +328,7 @@ blank 如果为True，该字段允许为空白，默认值False
     admin.site.register(HeroInfo)
 
 ```
-## 查询(通过模型类查询数据库)
+## 设置数据库日志
 ```
 > 修改mysql的日志文件，让其产生mysql.log，即是mysql的日志文件，里面记录mysql数据库的操作记录i
 > 1. 使用下面的命令打开mysql的配置文件，去除68，69行的注释
@@ -339,7 +339,89 @@ blank 如果为True，该字段允许为空白，默认值False
     /var/log/mysql/mysql.log是mysql日志文件所在位置
 > 4. 使用下面命令可以实时查看mysql的日志文件
     sudo tail -f /var/log/mysql/mysql.log
-> 1.
+
+```
+## 查询函数(通过模型类查询数据库)
+```
+> 通过模型类.objects属性可以调用如下函数，实现对模型类对应的数据表的查询
+
+get  返回表中满足条件且只能是一条数据       返回值是一个模型类对象     1》如果查到多条数据，则抛异常MultipleObjectsReturned 2》查询不到数据，则抛异常DoesNotExist
+
+all  返回模型类对应表中所有数据          返回值是一个QuerySet      查询集
+
+filter  返回满足条件的数据            返回值是一个QuerySet       参数写查询条件
+
+exclude  返回不满足条件的数据          返回值是一个QuerySet      参数写查询条件
+
+order_by  对查询结果进行排序          返回值是一个QuerySet      参数中写根据哪些字段进行排序
+
+判等： exact
+BookInfo.objects.get(id=1)
+BookInfo.objects.get(id__exact=1)
+
+模糊查询： contains   mysql  like
+    BookInfo.objects.filter(btitle__contains='传')
+以什么开头以什么结尾： startswitch    endswitch
+  
+
+空查询  isnull
+    select * from booktest_bookinfo where btitle is not null;
+    BookInfo.objects.filter(btitle__isnull=False)
+
+
+范围查询  in
+    select * from booktest_bookinfo where id in (1,2,3,5)
+    BookInfo.objects.filter(id__in = [1,2,3,5])
+
+比较查询: gt(greate than)  lt(less than)  gte(equal)大于等于  lte 小于等于
+    select * from booktest_bookinfo where id > 3;
+    BookInfo.objects.filter(id__gt=3)
+
+日期查询：
+    BookInfo.objects.filter(bpub_date__year = 1980)
+
+    查询1980.1.1以后发表的图书
+    from datetime import date
+    BookInfo.objects.filter(bpub_date__gt=date(1980,1,1))
+
+exclude方法示例:
+    查询id不为3的图书信息
+    BookInfo.objects.exclude(id=3)
+
+order_by 方法示例
+    查询所有图书信息， 按照id从小到大进行排序
+    BookInfo.objects.all().order_by('id')
+    BookInfo.objects.order_by('id')
+
+     查询所有图书信息， 按照id从大到小进行排序
+    BookInfo.objects.all().order_by(-'id')
+    BookInfo.objects.order_by(-'id')
+```
+##  Q对象
+```
+作用： 用于查询条件之间的逻辑关系， not and or  可以对Q对象进行 & | ~ 操作
+
+使用之前先导入：
+    from django.db.models import Q
+    且
+    BookInfo.objects.filter(id__gt=3, bread__gt=30)
+    BookInfo.objects.filter(Q(id__gt=3) & Q(bread__gt=30))
+    或
+    BookInfo.objects.filter(Q(id__gt=3) | Q(bread__gt=30))
+    非
+    查询id不等于3图书信息
+    BookInfo.objects.filter(~Q(id3))
+```
+
+## F对象
+```
+作用：用于类属性之间的比较
+from django.db.models import F
+
+查询图书阅读量大于评论量图书信息
+BookInfo.objects.filter(bread++gt=F('bcomment'))
+查询图书阅读量大于2倍评论量图书信息
+BookInfo.objects.filter(bread++gt=F('bcomment') * 2)
 ```
 
 
