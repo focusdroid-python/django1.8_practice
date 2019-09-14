@@ -328,6 +328,19 @@ blank 如果为True，该字段允许为空白，默认值False
     admin.site.register(HeroInfo)
 
 ```
+## 查询(通过模型类查询数据库)
+```
+> 修改mysql的日志文件，让其产生mysql.log，即是mysql的日志文件，里面记录mysql数据库的操作记录i
+> 1. 使用下面的命令打开mysql的配置文件，去除68，69行的注释
+    sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
+> 2. 重启mysql服务，就会产生mysql的日志文件
+    sudo service mysql restart
+> 3. 打开mysql的日志文件
+    /var/log/mysql/mysql.log是mysql日志文件所在位置
+> 4. 使用下面命令可以实时查看mysql的日志文件
+    sudo tail -f /var/log/mysql/mysql.log
+> 1.
+```
 
 
 
