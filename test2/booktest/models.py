@@ -26,3 +26,18 @@ class HeroInfo(models.Model):
     hbook = models.ForeignKey('BookInfo')
     # 删除标记
     isDelete = models.BooleanField(default=False)
+
+# 新闻类型类
+class NewsType(models.Model):
+    # 类型名
+    type_name = models.CharField(max_length=20)
+
+# 新闻类
+class NewsInfo(models.Model):
+    title = models.CharField(max_length=128)
+    # 发布时间
+    pub_date = models.DateTimeField(auto_now_add=True)
+    # 信息内容
+    content = models.TextField()
+    # g关系属性
+    news_type = models.ManyToManyField('NewsType')
