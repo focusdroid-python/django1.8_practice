@@ -397,7 +397,7 @@ order_by 方法示例
     BookInfo.objects.all().order_by(-'id')
     BookInfo.objects.order_by(-'id')
 ```
-##  Q对象
+##  Q对象 用于查询条件之间的逻辑关系
 ```
 作用： 用于查询条件之间的逻辑关系， not and or  可以对Q对象进行 & | ~ 操作
 
@@ -413,7 +413,7 @@ order_by 方法示例
     BookInfo.objects.filter(~Q(id3))
 ```
 
-## F对象
+## F对象 用于类属性之间的比较
 ```
 作用：用于类属性之间的比较
 from django.db.models import F
@@ -422,6 +422,23 @@ from django.db.models import F
 BookInfo.objects.filter(bread++gt=F('bcomment'))
 查询图书阅读量大于2倍评论量图书信息
 BookInfo.objects.filter(bread++gt=F('bcomment') * 2)
+```
+
+## 聚合函数 aggregate 返回值一个字典
+```
+sum count avg max min
+
+aggregate: 调用这个函数来使用聚合，返回值一个字典
+
+使用之前先导入聚合类：
+    from django.db.models import Sum,Count, Max, Min, Avg
+
+>>> BookInfo.objects.all().aggregate(Count('id'))
+{'id__count': 8}
+>>> BookInfo.objects.all().aggregate(Count('bread'))
+{'bread__count': 8}
+
+
 ```
 
 
