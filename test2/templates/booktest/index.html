@@ -9,7 +9,7 @@
     <a href="/create">新增数据</a>
     <ul>
         {% for book in books %}
-            <li>{{book.btitle}}</li>
+            <li>{{book.btitle}}---- <a href="/delete{{book.id}}">删除</a></li>
         {% endfor %}
     </ul>
 </div>

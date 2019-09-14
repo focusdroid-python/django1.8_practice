@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from booktest.models import BookInfo
 from datetime import date
 from django.http import HttpResponse, HttpResponseRedirect
@@ -21,3 +21,13 @@ def create(request):
     # 返回应答
     # return HttpResponse('ok')
     return HttpResponseRedirect('/index') # 让浏览器自动返回/index页面
+
+def delete(request, did):
+    '''删除点击的图书'''
+    # 1. 通过did获取图书对象
+    book = BookInfo.objects.get(id=did)
+    # 2. 删除
+    book.delete()
+    # 3. 重定向，让浏览器访问 /index
+    # return HttpResponseRedirect('/index')
+    return redirect('/index')

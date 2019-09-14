@@ -255,8 +255,77 @@ DATABASES = {
     > 输入完成之后：
         python manage.py makemigrations // 生成迁移文件
         python manage.py migrate // 生成表
-    
 
+    > 页面重定向：
+        from django.shortcuts import render, redirect
+        from django.http import HttpResponse, HttpResponseRedirect
+
+```
+## 字段属性和选项
+```
+AutoField   自动增长的IntegerField，通常不用指定，不指定时django会自动创建属性为id为自动增长属性
+
+BooleanField  布尔字段， 数值为True  False
+
+NullBooleanField  支持Null  True   False
+
+CharField(max_length=最大长度) 字符串，参数max_length表示最大字符个数
+
+TextFiels   大文本字段，一般超过4000字是使用
+
+IntegerField   整数
+
+DecimalField(max_digits=None, decimal_places=None)  十进制浮点数， 参数max_digits表示总位数， decimal_places表示小数位数
+
+FloatField  浮点数，参数同上（本质区别，精度不同，一般精度使用这个，特殊精度使用上面DecimalField）
+
+DateField([auto_now=False, auto_now_add=False])
+auto_now, 自动设置该字段为当前时间用于最后一次 修改 的时间戳，更新的时间
+auto_now_add 第一次创建时自动设置当前时间，用于 创建 的时间戳
+
+TimeField  时间 ，参数同上
+DateTimeField  日期时间， 参数同DateField(年月日时分妙)
+
+FileField  上传文件的字段
+ImageField  继承于FileField，对上传的内容进行校对，确保是有效的图片
+
+```
+## 选项
+```
+default 默认值
+
+primary_key 若为True, 则该字段成为模型的主键字段，默认值是False，一般作为AutoField的选项使用
+
+unique  如果为True，这个字段在表中有唯一值，默认值False
+
+db_index 如果为True，则会在表中为此字段创建索引，默认值False
+
+db_column 字段的名称，如果未指定，则使用属性名称
+
+null 如果为True，表示允许为空，默认值False
+
+blank 如果为True，该字段允许为空白，默认值False
+
+```
+## 后台管理
+```
+> 1. 本地化
+    语言和时区
+    修改setting.py文件
+> 2. 创建管理员
+    python manage.py createsuperuser
+> 3. 注册模型类
+    在应用下admin.py中注册模型类
+    告诉django框架根据注册的模型类对应表管理页面
+    b = BookInfo()
+    str(b) __str__
+> 4. 自定义管理页面
+    自定义模型管理类，模型管理类就告诉django在生成管理页面上显示哪些内容
+
+在应用下面的admin.py文件：
+    '''这样就可以在之前创建的管理页面中使用这个HeroInfo这个表了'''
+    from booktest.models import HeroInfo
+    admin.site.register(HeroInfo)
 
 ```
 
