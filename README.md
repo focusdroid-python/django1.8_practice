@@ -466,7 +466,23 @@ models.ManyToManyField()  定义在哪个类都可以
 > 1. 一对一
 models.OneToOneField()  定义在哪个类都可以
 
+```
 
+## 关联查询
+```
+在一对多关系中，一对应类叫做一类，多对应的那个类我们叫做多类，我们把多类中定义关联的类属性叫做关联属性
+通过模型类进行关联查询：
+    查询图书信息，要求所有关联英雄的描述包含‘八’
+    BookInfo.objects.filter(heroinfo__hcomment__contains='八')
+    
+    查询图书信息，要求图书中的英雄id大于3
+    BookInfo.objects.filter(heroinfo__id__gt=3)
+
+    查询书名为天龙八部的所有英雄
+    HeroInfo.objects.filter(hbook__btitle='天龙八部')
+注意：
+    >1. 通过模型类实现关联查询时，要查那个表中的数据就需要哪个类来查
+    >2. 写关联查询条件的时候，如果类中没有这个关系，条件需要对应类的名，如果类中有关系属性，直接写关系属性
 ```
 
 
