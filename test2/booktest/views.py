@@ -31,3 +31,14 @@ def delete(request, did):
     # 3. 重定向，让浏览器访问 /index
     # return HttpResponseRedirect('/index')
     return redirect('/index')
+
+def area(request):
+    '''获取广州市的上级地区和下级地区'''
+    # 1 获取广州市的信息
+    area = AreaInfo.objects.get(atitle='广州市')
+    # 2 查询广州市的上级地区
+    parent = area.aParent
+    # 3. 广州市的下级地区
+    children = area.areainfo_set.all()
+    # 使用模板
+    return render(request, 'booktest/area.html', {'area': area, 'parent': parent})

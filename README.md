@@ -484,8 +484,37 @@ models.OneToOneField()  定义在哪个类都可以
     >1. 通过模型类实现关联查询时，要查那个表中的数据就需要哪个类来查
     >2. 写关联查询条件的时候，如果类中没有这个关系，条件需要对应类的名，如果类中有关系属性，直接写关系属性
 ```
+## 插入，更新，删除
+```
+>1. 调用一个模型类对象save方法的时候就可以实现对模型类对应数据表的插入和更新
+>2. 调用一个模型类的delete方法的时候就可以实现对模型类对应数据表数据的删除
+```
+## 自关联
+```
+子关联本质就是一对多的关系
+
+class AreaInfo(models.Model):
+    '''地区模型类'''
+    # 地区名称
+    atitle = models.CharField(max_length=20)
+    # 关系属性，代表当前地区的父级地区
+    aParent = models.ForeignKey('self', null=True, blank=True)
+
+def area(request):
+    '''获取广州市的上级地区和下级地区'''
+    # 1 获取广州市的信息
+    area = AreaInfo.objects.get(atitle='广州市')
+    # 2 查询广州市的上级地区
+    parent = area.aParent
+    # 3. 广州市的下级地区
+    children = area.areainfo_set.all()
+    # 使用模板
+    return render(request, 'booktest/area.html', {'area': area, 'parent': parent})
+
+![avatar](/home/focusdroid/下载/1.png)
 
 
+```
 
 
 
