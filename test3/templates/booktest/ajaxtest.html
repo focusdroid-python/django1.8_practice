@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajaxtest</title>
+    <script src="/static/js/jquery.js"></script>
+    <style>
+        #message {
+            color: red;
+        }
+    </style>
+
+</head>
+<body>
+<input type="button" id="btn" value="start">
+<div id="message">提示信息</div>
+</body>
+</html>
+<script>
+    $(function(){
+        $('#btn').click(function(){
+            $.ajax({
+                'url': '/ajax_handle',
+                'dataType': 'json'
+            }).success((data) => {
+                // 进行处理
+                console.log(data)
+                if(data.res === 200) {
+                    $('#message').show().html('00000')
+                }
+            })
+        })
+    })
+</script>
