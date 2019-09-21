@@ -15,25 +15,38 @@ def showtwo(request, num):
 
 def login(request):
     '''显示登陆页面'''
-    return render(request, 'booktest/login.html')
+    # 获取cookie的username
+    if 'username' in request.COOKIES and 'password' in request.COOKIES:
+        # 获取cookie中的用户名
+        username = request.COOKIES['username']
+        password = request.COOKIES['password']
+        return redirect('/index')
+    else:
+        username = ''
+        password = ''
+    return render(request, 'booktest/login.html', {'username': username, 'password': password})
 
 def login_check(request):
     '''登录校验视图'''
     ## request.POST 保存的是post方式提交的参数
     ## request.GET 保存的是get方式提交的参数
     # request.method请求方式
-    print(request.method)
+    # print(request.method)
     # request.path 只显示路由地址，不显示参数和域名
-    print(request.path)
+    # print(request.path)
     # 1. 获取用户名和密码
     username = request.POST.get('username')
     password = request.POST.get('password')
-    print(username+'---'+password)
+    remember = request.POST.get('remember') # 记住用户名的复选框
     # 2. 进行登录校验
     # 实际的情况：根据用户名和密码查找数据库
     # 模拟: tree   111
     if username == 'tree' and password == '111':
-        return redirect('/index')
+        response = redirect('/index') # 返回值就是HttpResponse
+        if remember == 'on':
+            response.set_cookie('username', username, max_age=2*24*3600)
+            response.set_cookie('password', password, max_age=2*24*3600)
+            return response
     else:
         return redirect('/login')
 
@@ -74,6 +87,17 @@ def get_cookie(request):
     num = request.COOKIES['num']
     return  HttpResponse(num)
 
+def set_session(request):
+    '''设置session'''
+    request.session['username'] = 'focusdroid'
+    request.session['age'] = 25
+    return HttpResponse('设置session成功')
+
+def get_session(request):
+    '''获取session'''
+    username = request.session['username']
+    age = request.session['age']
+    return HttpResponse(username+'---'+age)
 
 
 

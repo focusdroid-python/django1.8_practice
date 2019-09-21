@@ -611,9 +611,9 @@ django上线之前要做的以下几点：
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] # 设置静态保存目录
 
 ```
-## 状态保持
+## 状态保持 cookie
 ```
-cookie
+cookie 保存在浏览器端
 >1. 以键值对形式存储
 >2. 通过浏览器访问一个网站时，会将浏览器存储的跟网站相关的所有cookie信息发送给网站的服务器， request.COOKIES 
 >3. cookie是基于域名安全的 
@@ -636,8 +636,32 @@ def get_cookie(request):
     num = request.COOKIES['num']
     return  HttpResponse(num)
 
+```
+## 状态保持 session
+```
+session保存在服务器端 依赖cookie
+session 过程
+浏览器访问网站 ----》进行设置session信息------》django_session这个表里面  session_id: session_data --->
+设置一个cookie sessionid ----->返回应答让浏览器保存sessionid 唯一表示码------》在访问网站的时候获取sessionid根据sessionid的值取出对应的session信息
+request.session
 
-session
+设置session: request.session['username'] = 'tree'
+获取session： request.session['username']
+根据键值取值： request.session.get('健', 默认值)
+清楚所有session，并在存储中删除值部分 request.session.clear()
+清除session数据，在存储中删除session整条数据： request.session.flush()
+
+删除session中指定的键和值，在存储中删除session的整条数据： del request.session['键']
+
+request.session.set_expiry(value)
+如果value是一个整数，会话session_id cookie 将在value秒之后过期
+如果value是一0，会话session_id cookie 将在浏览器关闭之后过期
+如果value是None（不设置），会话session_id cookie 将在14天之后过期
+
+>1. session以键值对进行存储
+>1. session依赖cookie，唯一的标识码sessionid 保存在cookie中
+>1. session也有过期时间， 如果不指定，默认两周过期
+
 
 ```
 

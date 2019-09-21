@@ -13,4 +13,6 @@ urlpatterns = [
     url(r'^login_ajax_hangle$', views.login_ajax_hangle), # ajax提交地址
     url(r'^set_cookie$', views.set_cookie),
     url(r'^get_cookie$', views.get_cookie),
+    url(r'^set_session', views.set_session),
+    url(r'^get_session$', views.get_session),
 ]
