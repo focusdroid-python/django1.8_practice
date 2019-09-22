@@ -662,6 +662,57 @@ request.session.set_expiry(value)
 >1. session依赖cookie，唯一的标识码sessionid 保存在cookie中
 >1. session也有过期时间， 如果不指定，默认两周过期
 
+```
+## cookie和session的应用场景
+```
+cookie: 记住用户名，安全性不高
+session： 涉及到安全性要求比较高的数据， 银行卡账户，密码
+```
+
+## 模板
+```
+>1. 首先去配置的模板目录下面去找模板
+>2. 去INSTALLED_APPS下面的每个应用的去找模板文件，前提应用中必须有templates文件夹
+
+模板的取值：
+    把book当成一个字典，把btitle当成键名，进行取值book['btitle']
+    把book当成一个对象，把btitle当成一个属性，进行取值 book.btitle
+    把book当成一个对象，把btitle当成对象的方法，进行取值 book.btitle
+使用模板变量的时候，前面可能是一个字典，可能是一个对象，可能是一个列表
+
+
+模板标签：
+
+登录装饰器：
+# 是否登录的装饰器
+def login_require(view_func):
+    '''登录判断装饰器'''
+    def wrapper(request, *args, **view_Kwargs):
+        # 判断用户是否登录
+        if request.session.has_key('isLogin'):
+            # 用户已登录，调用对应视图
+            return view_func(request, *args, **view_Kwargs)
+        else:
+            # 用户未登录
+            return redirect('/login')
+    return wrapper
+
+csrf伪造攻击:
+> 1. 登录正常的网站之后你的浏览器保存的session，你没有退出
+> 2. 你有访问另外一个网站， 并且点击页面上的按钮
+# csrf只针对post进行防护
+    <form method="post" action="/change_pwd_action">
+        {% csrf_token %}
+        新密码: <input type="password" name="pwd">
+        <input type="submit" value="确认修改">
+    </form>
+
+防御原理:
+>1. 渲染模板文件时在页面上生成一个名字叫做csrfmiddlewaretoken的隐藏域
+>2. 服务器交给浏览器保存一个csrftoken的cookie信息
+>3. 提交表单时，两个值都会发给服务器，服务器进行比对，如果一样，则csrf验证通过，否则失败 
+
+
 
 ```
 
