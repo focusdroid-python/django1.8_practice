@@ -3,6 +3,10 @@ from django.template import loader, RequestContext
 from django.http import HttpResponse
 from booktest.models import BookInfo
 
+from PIL import Image, ImageDraw, ImageFont
+from django.utils.six import BytesIO
+import random
+
 # Create your views here.
 
 def my_render(request, template_path, context={}):
@@ -64,6 +68,13 @@ def login_check(request):
     username = request.POST.get('username')
     password = request.POST.get('password')
     remember = request.POST.get('remember') # 记住用户名的复选框
+
+    # 获取验证码
+    code = request.POST.get('code')
+    verifycode = request.session.get('verifycode')
+    # 进行验证码校验
+    if code != verifycode:
+        return redirect('/login')
     # 2. 进行登录校验
     # 实际的情况：根据用户名和密码查找数据库
     # 模拟: tree   111
@@ -98,6 +109,79 @@ def change_pwd_action(request):
 
     # 3. 返回应答
     return HttpResponse('%s修改密码%s'% (username,pwd))
+
+def verify_code(request):
+    '''随机验证码'''
+    # 1.创建画面对象
+    # 定义变量，用于画面的背景色、宽、高
+    bgcolor = (255, 255, 255)
+    width = 200
+    height = 45
+
+    im = Image.new('RGB', (width, height), bgcolor)
+    # 2.创建画笔对象
+    draw = ImageDraw.Draw(im)
+    # 3.调用画笔的point()函数绘制噪点
+    for i in range(0, 100):
+        xy = (random.randrange(0, width), random.randrange(0, height))
+        fill = (random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255))
+        draw.point(xy, fill=fill)
+    # 调用画笔的point()函数绘制6条干扰线
+    for i in range(6):
+        x1 = int(random.randrange(0, width))
+        y1 = int(random.randrange(0, height))
+        x2 = int(random.randrange(0, width))
+        y2 = int(random.randrange(0, height))
+        fill = (random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255))
+        draw.line([(x1, y1), (x2, y2)], fill=fill, width=2)
+
+    # 4.定义验证码的备选值
+    str1 = 'ABCD123EFGHIJK456klmnopqrstuvwsyzLMNOPQRS789TUVWXYZ0abcdefghij'
+    # 随机选取4个值作为验证码
+    rand_str = ''
+    for i in range(0, 4):
+        rand_str += str1[random.randrange(0, len(str1))]
+    # 构造字体对象，ubuntu的字体路径为“/usr/share/fonts/truetype/freefont”
+    # 构造字体类型和大小
+    font = ImageFont.truetype('FreeMono.ttf', random.randrange(23, 40))
+    # 绘制4个字
+    draw.text((15, 10), rand_str[0], font=font, fill=random.randrange(0, 255))
+    draw.text((65, 10), rand_str[1], font=font, fill=random.randrange(0, 255))
+    draw.text((120, 10), rand_str[2], font=font, fill=random.randrange(0, 255))
+    draw.text((175, 10), rand_str[3], font=font, fill=random.randrange(0, 255))
+    # 5.释放画笔
+    del draw
+    # 6.存入session，用于做进一步验证
+    request.session['verifycode'] = rand_str
+
+    # 内存文件操作(python2)
+    # import cStringIO
+    # buf = cStringIO.StringIO()
+
+    # 内存文件操作(python3)
+    from io import BytesIO
+    buf = BytesIO()
+    print(buf)
+    # 7.将图片保存在内存中，文件类型为png
+    im.save(buf, 'png')
+    # 8.将内存中的图片数据返回给客户端，MIME类型为图片png
+    return HttpResponse(buf.getvalue(), 'image/png')
+
+def url_reverse(request):
+    '''url反向解析'''
+    return render(request, 'booktest/url_reverse.html')
+
+from django.core.urlresolvers import reverse
+# urlresolvers 重定向
+def test_redirect(request):
+    # 重定向到/index
+    # url = reverse('booktest:index')
+    # 普通参数： /show_args/1/2
+    # url = reverse('booktest:show_args', args=(1,2))
+    # 关键字参数
+    url = reverse('booktest:show_kwargs', kwargs={'c': 3, 'd': 4})
+    return redirect(url)
+
 
 
 

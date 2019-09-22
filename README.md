@@ -698,6 +698,9 @@ def login_require(view_func):
     return wrapper
 
 csrf伪造攻击:
+>1. 默认打开csrf中间件
+>2. 表单post提交数据时加上{% csrf_token %}标签 
+
 > 1. 登录正常的网站之后你的浏览器保存的session，你没有退出
 > 2. 你有访问另外一个网站， 并且点击页面上的按钮
 # csrf只针对post进行防护
@@ -715,7 +718,38 @@ csrf伪造攻击:
 
 
 ```
+## 验证码
+```
+pip3 install Pillow==3.4.1
+如果安装pillow出错https://blog.csdn.net/shaququ/article/details/54292017
+```
+## url反向解析
+```
+    url(r'^', include('booktest.urls', namespace='booktest')), 添加namespace=‘booktest’ 一般都是应用名
 
+在应用中的urls中：
+    url(r'^index$', views.index, name='index'), 添加name
+正常的：
+<h1><a href="/index">首页</a></h1>
+
+<div>url反向解析生成index链接，不受html文件名限制，只通过name属性</div>
+<h1><a href="{% url 'booktest:index2' %}">首页</a></h1>
+
+普通参数和关键字参数
+<a href='{% url 'booktest:show_args' 1 2 %}'></a>
+<a href='{% url 'booktest:show_args' c=1 d=2 %}'></a>
+
+from django.core.urlresolvers import reverse
+# urlresolvers 重定向
+def test_redirect(request):
+    # 重定向到/index
+    # url = reverse('booktest:index')
+    # 普通参数： /show_args/1/2
+    # url = reverse('booktest:show_args', args=(1,2))
+    # 关键字参数
+    url = reverse('booktest:show_kwargs', kwargs={'c': 3, 'd': 4})
+    return redirect(url)
+```
 
 
 
