@@ -750,7 +750,394 @@ def test_redirect(request):
     url = reverse('booktest:show_kwargs', kwargs={'c': 3, 'd': 4})
     return redirect(url)
 ```
+## 静态文件
+```
+配置静态文件所在的物理目录， setting.py
+STATIC_URL = '/static'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+STATIC_URL 设置静态文件对应的url
+STATICFILES_DIRS 设置静态文件所在的物理目录
+
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>image</title>
+    <style>
+        .img {
+            width: 500px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <img src="/static/image/timg.jpeg" class="img" alt=""> <br/>
+    动态获取，拼接静态文件的路径：<br/>
+    <img src="{% static 'image/timg.jpeg' %}" class="img" alt="">
+</div>
+</body>
+</html>
+
+```
+
+## 中间件 test5项目
+```
+中间件函数是django框架给我们预留的函数接口，让我们可以干预请求和应答过程
+获取浏览器端的ip地址：
+    使用request对象的META属性：request.META['REMOTE_ADDR']
+
+使用中间件：
+    
+
+禁止IP访问：
+EXCLUDE_IPS = ['192.168.0.9']
+def index2(request):
+    '''首页'''
+    # 获取浏览器端的ip地址
+    user_ip = request.META['REMOTE_ADDR']
+    if user_ip in EXCLUDE_IPS:
+        return render(request, 'booktest/ip.html')
+    else:
+        return render(request, 'booktest/index2.html')
+
+使用装饰器实现：
+EXCLUDE_IPS = ['192.168.0.9']
+def blocked_ips(view_func):
+    def wrapper(request, *view_args, **view_kwargs):
+        user_ip = request.META['REMOTE_ADDR']
+        if user_ip in EXCLUDE_IPS:
+            return render(request, 'booktest/ip.html')
+        else:
+            return view_func(request, *view_args, view_kwargs)
+    return wrapper
+
+# request 和视图的request视图一样
+# view_func 要调用哪个视图函数
+# *view_args 视图函数的位置参数
+# **view_kwargs 视图函数的关键字参数
+
+通过django来实现封禁IP：（全局过滤）
+>1. 新建middleware.py文件， 
+>2. 在建应用的下面新建， process_view是django指定的，不能改变,还有必须定义在类里面
+>3. 注册这个类，在setting.py中：
+    MIDDLEWARE_CLASSES = (
+         ...
+        'booktest.middleware.BlockedIPSMiddleware', # 注册中间件类
+    )
+在类中定义中间件预留函数：
+    __init__: 服务器响应第一个请求的时候调用
+    process_request: 是在产生request对象，进行url匹配之前调用
+    precess_view: 是url匹配之后，调用视图函数之前
+    process_exception: 视图函数出现异常，内容返回给浏览器之前，会调用这个函数。
+        如果注册的多个中间件类中包含process_exception函数的时候，
+        调用的顺序跟注册的顺序是相反的
+            --------调用异常222222222222222222222222222&******************************
+            --------调用异常&1111111111111111111111111******************************
+
+
+
+1. 产生request对象
+2. 调用中间件类中的process_request
+3. 通过url找对应的视图
+4. 调用中间件process_view
+5. 调用view
+6. 调用中间件类中的process_response
+
+```
+## admin后台管理
+```
+models.py: # test5
+    class AreaInfo(models.Model):
+    '''地址模型类'''
+    atitle = models.CharField(max_length=20)
+    # 自关联属性
+    aParent = models.ForeignKey(BookInfo, null=True, blank=True)
+
+    def __str__(self): # 显示这张表结构的名称
+        return self.atitle
+```
+## 上传文件设置
+```
+>1. 在static下面新建midia文件夹
+# 设置上传保存目录
+>2. MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
+
+### 用户自定义上传图片：
+    > 使用表单上传，必须是post
+    > 制定编码类型：enctype='multipart/from-data'
+
+
+上传文件不大于2.5M放在内存中，如果有大于2.5M放在临时的文件中
+print(type(pic))
+# <class 'django.core.files.uploadedfile.InMemoryUploadedFile'>
+# <class 'django.core.files.uploadedfile.TemporaryUploadedFile'>
+    # 1。 获取上传文件的处理对象
+    pic = request.FILES['pic']
+    # 2. 创建一个文件
+    # 3. 获取上传文集爱你的内容，并写入到创建的文件中
+    # 4. 在数据库保存上传记录
+    # 5. 返回
+django文件上传处理类：
+    print(settings.FILE_UPLOAD_HANDLERS)
+
+
+
+def upload_handle(request):
+    '''接受上传图片'''
+    # 1。 获取上传文件的处理对象
+    pic = request.FILES['pic']
+
+    # 2. 创建一个文件
+    save_path = '%s/booktest%s'%(settings.MEDIA_ROOT, pic.name)
+    with open(save_path, 'wb') as f:
+        # 3. 获取上传文件的内容，并写入到创建的文件中
+        for content in pic.chunks():
+            f.write(content)
+
+    # 4. 在数据库保存上传记录 print(random.randint(0,9))
+    num = random.randint(0, 9)
+    PicTest.objects.create(goods_pic='booktest%d/%s'%(num, pic.name))
+    # 5. 返回
+    return HttpResponse('ok')
+```
+## 分页
+```
+from django.core.paginator import Paginator
+Paginator类对象的属性：
+    num_pages: 返回分页之后的总页数
+    page_range: 返回分页之后的页码列表
+
+Pagintor类对象的方法：
+    page(self, number): 返回第number页的Page类实例对象
+
+Page类对象的属性：
+    number: 返回当前页的页码
+    object_list: 返回包含当前页数据的查询集
+    paginator: 返回对应的pagintor对象
+
+Page类对象的方法：
+    has_previcus: 判断当前页是否有前一页
+    has_next: 判断当前页是否含有下一页
+    previous_page_number: 返回前一页的页面
+    next_page_number: 返回下一页的页码
+    
+
+```
+
+## redis数据库
+```
+http://www.redis.cn/download.html
+Redis特性:
+Redis与其他key-value缓存产品有一下三个特点
+    支持数据持久化,可以将内存中的数据保存在磁盘中，重启的时候可以再次进行加载进行使用
+    不仅仅支持支持简单的key-value类型的数据，同时还提供list，zset，hash等数据结构存储
+    支持数据备份，即master-slave模式的数据备份
+
+Redis优势：
+性能极高，Redis能读的速度是110000次/s, 写的速度81000次/s
+丰富的数据类型，Redis支持二进制案例String，Lists， Hashes, Sets
+及 Ordered Sets数据类型操作
+原子 Redis的所有操作都是原子性，同时Redis还支持对几个操作全并后的原子性执行
+
+Redis应用场景：
+    用来做缓存--redis的所有数据是放在内存中的（内存数据库）
+    可以用在某些特定应用场景下替代传统数据库--比如社交类应用
+    在一些应用大型系统中，巧妙的实现特定的功能，session共享，购物车
+    
+
+Redis下载安装
+    wget http://download.redis.io/releases/redis-3.2.8.tar.gz
+    
+    tar -zxvf redis-3.2.8.tar.gz
+
+    sudo mv ./redis-3.2.8/usr/local/redis
+
+    cd /usr/local/redis
+
+    sudo make
+
+    sudo make test(测试安装环境)
+    
+    sudo make install（安装可执行程序，安装在/usr/local/bin这个目录下方）
+
+    安装完成之后，检查安装：
+        cd /usr/local/bin
+        ls -all
+        查看是否安装上redis-cli redis-server
+    
+    配置文件目录：
+        sudo cp ./redis.conf /etc/redis/redis.conf
+
+redis-server redis服务器
+redis-cli redis命令行客户端
+redis-benchmark redis性能测试工具
+redis-check-aof AOF文件修复工具
+redis-check-rdb RDB文件检索工具
+    
+    
+
+如果报错：
+You need tcl 8.5 or newer in order to run the Redis test.
+安装Redis，运行make test的时候出错：
+
+You need tcl 8.5 or newer in order to run the Redis test
+make: *** [test] Error 1
+
+安装tcl就行了：
+
+复制代码
+wget http://downloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz
+sudo tar xzvf tcl8.6.9-src.tar.gz -C /usr/local/
+cd /usr/local/tcl8.6.9/unix/
+sudo ./configure
+sudo make
+sudo make install
+    
+```
+## redis核心配置项
+```
+查看/etc/redis/redis.conf下：
+    sudo vi /etc/redis/redis.conf
+绑定ip：如果远程访问，可将此行注释，或绑定一个真实ip
+    bind 127.0.0.1
+
+端口： 默认6379
+    port 6379
+
+是否以守护进程进行:
+    如果是守护进程，则不会在命令行阻塞，类似于服务
+    如果是非守护进程，则当前终端被阻塞
+    设置为yes表示守护进程，设置no表示非守护进程
+    推荐使用yes
+    daemonize yes
+
+数据文件:
+   dbfilename dumo.rdb
+
+数据文件存储路径：
+    dir /var/lib/redis
+日志文件：
+    logfile /var/log/redis/redis-server.log
+
+数据库：默认是16个
+    database 16
+
+主从复制，类似于双机备份
+    slaveof
+```
+## redis服务器端
+```
+服务器端命令是： redis-server
+可以使用帮助文档：
+    redis-server --help
+
+推荐使用服务方式管理redis服务
+启动:
+    sudo service redis start
+
+停止：
+    sudo service redis stop
+
+重启： sudo service redis restart
+
+个人习惯：
+    ps -ef | grep redis 查看redis服务器进程
+    sudo kill -9 pid 杀死redis服务器
+    sudo redis-server /etc/redis/redis.conf 指定加载的配置文件
+```
+## redis客户端
+```
+客户端的命令为redis-cli
+连接redis：
+    redis-cli
+运行测试命令：
+    ping
+
+切换数据库：
+数据库没有名称，默认只有16个，通过0-15来标识，连接redis默认选择第一个数据库
+select n
+
+
+值类型分为5种：
+字符串string
+哈希 hash
+列表 list
+集合 set
+有序集合 zset
+
+保存：
+    set key value
+设置键值过期时间：
+    setex aa 3 bb
+
+设置多个键值：
+    mset a1 python a2 java a3 javascript
+追加值：
+    append key value
+
+获取：
+获取单个key的值：
+    get key
+一次获取多个值：
+    mget key1 key2 ...
+
+键命令：
+keys pattern
+
+查看所有键:
+    keys *
+判断键命令是否存在：
+    exists key
+查看value的类型：
+    type key
+
+删除：
+删除键及对应的值：
+    del key1 keys
+设置过期时间:
+    expire key seconds
+    expire a1 300
+查看过期时间：
+    ttl key
+
+
+hash类型：
+hash用于存储对象，对象的结构为属性，值
+值的类型为string
+
+增加，修改：
+设置单个属性：
+    hset key field value
+设置键user的属性name为tree
+    hset user name tree
+ 
+设置多个属性：
+hmset key field1 value field2 value
+hmset u2 name tree age 12
+
+获取：
+hkeys key
+hkeys u2  // name age
+获取多个属性值：
+hmget key field1 field2
+hmget u2 name age
+
+获取所有属性的值：
+hvals key
+hvals u2
+
+
+删除：
+删除整个hash键，使用del命令
+hdel key field1 field2
+hdel u2 age
+
+解决某些小问题：
+强制关闭redis快照导致不能持久化，
+config set stop-writes-on-bgsave-error no
+```
 
 
 
