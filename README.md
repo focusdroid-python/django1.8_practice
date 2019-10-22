@@ -341,6 +341,14 @@ blank 如果为True，该字段允许为空白，默认值False
     sudo tail -f /var/log/mysql/mysql.log
 
 ```
+## 数据库授权
+```
+grant all privileges test6.* to 'root'@'192.168.1.108' identified by 'mysql' with grant option;
+flush privileges
+
+test6.*数据库名称
+'root'@'192.168.1.108' root账户，和给ip授权
+```
 ## 查询函数(通过模型类查询数据库)
 ```
 > 通过模型类.objects属性可以调用如下函数，实现对模型类对应的数据表的查询
@@ -1139,7 +1147,165 @@ hdel u2 age
 config set stop-writes-on-bgsave-error no
 ```
 
+```
+list类型
+特点:
+列表的元素类型是string
+按照插入顺序排序
+增加：
+在左侧插入数据
+lpush key value1 value2
+lrange key start end
+在右侧插入数据
+rpush key value1 value2
 
+在指定元素前或者后插入新元素
+linsert key before或after 现有元素 新元素
+
+删除
+count > 0 从头往尾移除
+count < 0 从尾往头移除
+count = 0 移除所有
+lrem key count value
+
+
+set类型
+无序集合
+元素为string类型
+元素句具有唯一性
+说明：对于集合没有修改操作
+
+
+增加：
+sadd key member1 member2
+
+获取
+smembers key
+
+删除
+srem key
+
+zset
+有序集合
+元素为string类型
+元素句具有唯一性
+每个元素都会关联一个double类型的score，表示权重，通过权重将元素从小到大排序
+
+说明：对于集合没有修改操作
+
+```
+## ubuntu安装redis
+```
+> redis安装:
+1. 进入虚拟环境，
+    pip3 install redis
+
+> 调用模块
+引入模块：
+from redis import *
+这个模块提供了StrictRedis对象（Strict严格），用于连接服务器，并按照不同类型提供不同的方法进行交互操作 
+String
+    set
+    setex
+    mset
+    append
+    get
+    mget
+    key
+
+keys:
+    exists
+    type
+    delete
+    expire
+    getrange
+    ttl
+hash:
+    hset
+    hmset
+    hkeys
+    hget
+    hmget
+    hvals
+    hdel
+
+list:
+    lpush
+    rpush
+    linsert
+    lrange
+    lset
+    lrem
+set:
+    sadd
+    smembers
+    srem
+zset:
+    zadd
+    zrange
+    zrangebyscore
+    zscore
+    zrem
+    zremrangebyscore
+
+### 准备
+创建一个redis目录
+创建redis_string.py
+from redis import StrictRedis
+
+
+if __name__ == '__main__':
+    # 创建StrictRedis对象，链接redis数据库
+    try:
+        sr = StrictRedis()
+        # 添加一个key，为name, value, focusdroid
+        res = sr.set('name', 'focusdroidss')
+
+        res = sr.set('name', 'nangong')
+        # 获取name的值
+        rss = sr.get('name')
+        print(rss)
+    except Exception as e:
+        pass
+
+使用redis存储session：
+session的redis配置
+1. 安装pip3 install django-redis-sessions==0.5.6
+2. 修改settings文件,增加如下项:
+    # 设置redis存储redis信息
+    SESSION_ENGINE = 'redis_sessions.session'
+    # redis服务的ip地址
+    SESSION_REDIS_HOST = 'localhost'
+    # redis服务的端口号
+    SESSION_REDIS_PORT = 6379
+    # redis中哪一个数据库
+    SESSION_REDIS_DB = 2
+    # 链接数据库密码
+    SESSION_REDIS_PASSWORD = ''
+    # session: 唯一标识码
+    SESSION_REIS_PREFIX = 'session'
+    
+
+```
+## 搭配redis主从服务器
+```
+> 1. 配置主服务器
+修改/etc/redis/redis.conf文件
+sudo vi /etc/redis/redis.conf
+bind 192.168.1.108（服务器ip）
+重启服务器
+redis-server redis.conf
+但是最新版本的redis需要这样启动：
+redis-cli -h 192.168.1.108 -p 6379
+
+使用ps -aux | grep redis 查看
+
+
+> 2. 配置从服务器
+
+```
+
+## 天天生鲜项目
 
 
 
@@ -1169,6 +1335,7 @@ config set stop-writes-on-bgsave-error no
     python manage.py shell
     
     
+```
 insert into booktest_bookinfo(btitle, bpub_date, bread, bcomment, isDelete) values
 ('射雕英雄传', '1980-5-1', 12, 34, 0),
 ('天龙八部', '1986-7-24', 36, 40, 0),
@@ -1183,4 +1350,4 @@ insert into booktest_heroinfo(hname, hgender, hbook_id, hcomment, isDelete) valu
 ('梅超风', 0, 1, '九阴白骨爪', 0),
 ('乔峰', 1, 1, '降龙十八掌', 0),
 ('王语', 1, 2, '神仙姐姐', 0);
-    
+```
