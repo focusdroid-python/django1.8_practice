@@ -9,7 +9,7 @@ class GoodsType(BaseModel):
     '''商品类型模型类'''
     name = models.CharField(max_length=20, verbose_name='种类名称')
     logo = models.CharField(max_length=20, verbose_name='标识')
-    image = models.ImageField(uploadto='type', verbose_name='商品类型图片')
+    image = models.ImageField(upload_to='type', verbose_name='商品类型图片')
 
     class Meta:
         db_table = 'df_goods_type'
@@ -93,7 +93,7 @@ class IndexPromotionBanner(BaseModel):
     '''首页促销活动模型类'''
     name = models.CharField(max_length=20, verbose_name='活动名称')
     url = models.URLField(verbose_name='活动链接')
-    image = models.ImageField(uploadto='banner', verbose_name='活动顺序')
+    image = models.ImageField(upload_to='banner', verbose_name='活动顺序')
     index = models.SmallIntegerField(default=0, verbose_name='展示顺序')
 
     class Meta:
