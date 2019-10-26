@@ -1,0 +1,29 @@
+.disflex {
+	display: flex;
+}
+.jcsb {
+	justify-content: space-between;
+}
+.ml50 {
+	margin-left: 50px;
+}
+.mt50 {
+	margin-top: 50px;
+}
+.center {
+	text-align: center;
+}
+.ivu-carousel div {
+	background-color: #ccc;
+	height: 275px;
+}
+.img-size img {
+	display: inline-block;
+	height: 134px;
+	width: 100%;
+}
+.goods-title {
+	font-size: 18px;
+	color: yellowgreen;
+	margin-right: 30px;
+}

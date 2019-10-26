@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>注册</title>
+	<link rel="stylesheet" href="./css/iview.css">
+	<link rel="stylesheet" type="text/css" href="./css/common.css">
+	<style type="text/css" media="screen">
+		#app {
+			padding-top: 50px;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<i-row>
+			<i-col :span='24'>
+				用户名：
+				<i-input v-model="username" placeholder="Enter something..." style="width: 300px" />
+			</i-col>
+			<i-col :span='24'>
+				密码：
+				<i-input v-model="passwd" placeholder="Enter something..." style="width: 300px" />
+			</i-col>
+			<i-col :span='24'>
+				确认密码：
+				<i-input v-model="dobpasswd" placeholder="Enter something..." style="width: 300px" />
+			</i-col>
+			<i-col :span='24'>
+				邮箱：
+				<i-input v-model="mail" placeholder="Enter something..." style="width: 300px" />
+			</i-col>
+			<i-col :span='24'>
+				<Checkbox v-model="single">同意京宝平台使用协议</Checkbox>
+			</i-col>
+			<i-col :span='24'>
+				<i-button type="success" long style="width: 300px">注册</i-button>
+			</i-col>
+		</i-row>
+	</div>
+</body>
+</html>
+<script src="./js/vue.js"></script>
+<script src="./js/iview.js"></script>
+<script src="./js/axios.js"></script>
+<script>
+	new Vue({
+		el: '#app',
+		data:{
+			username: '',
+			passwd: '',
+			dobpasswd: '',
+			mail: '',
+			single: false
+		},
+		methods: {}
+	}).mount
+</script>

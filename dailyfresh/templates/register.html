@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>注册</title>
+	<link rel="stylesheet" href="/static/css/iview.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/common.css">
+	<style type="text/css" media="screen">
+		#app {
+			padding-top: 50px;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+{% csrf_token %}
+	<div id="app">
+		<Row>
+			<i-col :span='24'>
+				用户名：
+				<i-input v-model="username" placeholder="Enter something..." style="width: 300px" />
+			</i-col>
+			<i-col :span='24'>
+				密码：
+				<i-input v-model="passwd" placeholder="Enter something..." style="width: 300px" />
+			</i-col>
+			<i-col :span='24'>
+				确认密码：
+				<i-input v-model="dobpasswd" placeholder="Enter something..." style="width: 300px" />
+			</i-col>
+			<i-col :span='24'>
+				邮箱：
+				<i-input v-model="mail" placeholder="Enter something..." style="width: 300px" />
+			</i-col>
+			<i-col :span='24'>
+				<Checkbox v-model="single">同意京宝平台使用协议</Checkbox>
+			</i-col>
+			<i-col :span='24'>
+				<i-button @click="register" type="success" long style="width: 300px">注册</i-button>
+			</i-col>
+		</Row>
+	</div>
+</body>
+</html>
+<script src="/static/js/vue.js"></script>
+<script src="/static/js/iview.js"></script>
+<script src="/static/js/axios.js"></script>
+{% csrf_token %}
+<script>
+	new Vue({
+		el: '#app',
+		data:{
+			username: '',
+			passwd: '',
+			dobpasswd: '',
+			mail: '',
+			single: false
+		},
+		mounted () {
+			console.log('page mounted!!')
+		},
+		methods: {
+
+			register () { // 注册操作 /user/register_handle
+				let that = this;
+				let obj = {username: this.username, passwd: this.passwd, mail: this.mail, single: this.single}
+				 axios({
+					 url: '/user/register_handle',
+					 method: 'post',
+					data: obj
+				 }).then(function (res) {
+					if (res.status === 200 || res.status === '200') {
+						console.log(res.data.err === 'error')
+						if (res.data.status === 'success') {
+							that.$Message.success(res.data.msg);
+							window.location.replace('/')
+						} else {
+							that.$Message.warning(res.data.msg);
+						}
+					} else {
+						that.$Message.warning('请求失败，请重试！')
+					}
+				  })
+				  .catch(function (error) {
+					console.log(error);
+				  });
+			}
+		}
+	})
+</script>

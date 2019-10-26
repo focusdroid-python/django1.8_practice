@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>首页</title>
+	<link rel="stylesheet" href="./css/iview.css">
+	<link rel="stylesheet" type="text/css" href="./css/common.css">
+	<style type="text/css" media="screen">
+		#app {
+			padding: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<Row :gutter='20'>
+			<i-col :span='24' class="disflex center">
+				<div class='disflex'>
+					<div>
+						<i-input v-model="search" placeholder="请输入商品" style="width: 300px" />
+					</div>
+					<div>
+						<i-button type="primary">搜索</i-button>
+					</div>
+				</div>
+				<div class='ml50'>
+					<i-button>购物车</i-button>
+					<i-input disabled v-model="cart" style="width: 100px" />
+				</div>
+			</i-col>
+			<!-- 轮播图start -->
+			<i-col :span='24' class='mt50'>
+        		<Row>
+        			<i-col :span='5'>
+        				<List border>
+				            <list-item><i-icon type="md-briefcase" />This is a piece of text.</list-item>
+				            <list-item><i-icon type="logo-apple" />This is a piece of text.</list-item>
+				            <list-item><i-icon type="logo-chrome" />This is a piece of text.</list-item>
+				            <list-item><i-icon type="md-briefcase" />This is a piece of text.</list-item>
+				            <list-item><i-icon type="logo-apple" />This is a piece of text.</list-item>
+				            <list-item><i-icon type="logo-chrome" />This is a piece of text.</list-item>
+				        </List>
+        			</i-col>
+        			<i-col :span='14'>
+        				<Carousel v-model="value1" loop style='height: 275px;'>
+					        <carousel-item>
+					            <div class="demo-carousel">1</div>
+					        </carousel-item>
+					        <carousel-item>
+					            <div class="demo-carousel">2</div>
+					        </carousel-item>
+					        <carousel-item>
+					            <div class="demo-carousel">3</div>
+					        </carousel-item>
+					        <carousel-item>
+					            <div class="demo-carousel">4</div>
+					        </carousel-item>
+					    </Carousel>
+        			</i-col>
+        			<i-col :span='5'>
+        				<div class='img-size'>
+        					<img src="./img/1.jpeg" alt="">
+        					<img src="./img/2.jpeg" alt="">
+        				</div>
+        			</i-col>
+        		</Row>
+			</i-col>
+			<!-- 轮播图end -->
+			<!-- 商品列表start -->
+			<i-col :span='24' class='mt50'>
+				<Row>
+					<i-col :span='24'>
+						<Card style="width:100%；">
+					        <div class='disflex jcsb'>
+								<div>
+									<span class="goods-title">新鲜水果</span>
+									<span>芒果</span>
+									<span>加州提子</span>
+									<span>亚马逊牛油果</span>
+								</div>
+								<div>查看更多 &gt;</div>
+							</div>
+							<Row>
+								<i-col :span='24'>
+						<div class='disflex'>
+							<div style="width: 20%">
+								<img style="display: inline-block; width: 100%; height: 355px; margin-top: 20px;" src="./img/2.jpeg" alt="">
+							</div>
+							<div class='disflex jcsb' style="width: 80%">
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+							</div>
+
+						</div>
+					</i-col>
+							</Row>
+					    </Card>
+					<i-col>
+						
+				</Row>
+				<Row>
+					<i-col :span='24'><i-col>
+				</Row>
+				<Row>
+					<i-col :span='24'><i-col>
+				</Row>
+			</i-col>
+			<i-col :span='24' class='mt50'>
+				<Row>
+					<i-col :span='24'>
+						<Card style="width:100%；">
+					        <div class='disflex jcsb'>
+								<div>
+									<span class="goods-title">新鲜水果</span>
+									<span>芒果</span>
+									<span>加州提子</span>
+									<span>亚马逊牛油果</span>
+								</div>
+								<div>查看更多 &gt;</div>
+							</div>
+							<Row>
+								<i-col :span='24'>
+						<div class='disflex'>
+							<div style="width: 20%">
+								<img style="display: inline-block; width: 100%; height: 355px; margin-top: 20px;" src="./img/2.jpeg" alt="">
+							</div>
+							<div class='disflex jcsb' style="width: 80%">
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+							</div>
+
+						</div>
+					</i-col>
+							</Row>
+					    </Card>
+					<i-col>
+						
+				</Row>
+				<Row>
+					<i-col :span='24'><i-col>
+				</Row>
+				<Row>
+					<i-col :span='24'><i-col>
+				</Row>
+			</i-col>
+			<i-col :span='24' class='mt50'>
+				<Row>
+					<i-col :span='24'>
+						<Card style="width:100%；">
+					        <div class='disflex jcsb'>
+								<div>
+									<span class="goods-title">新鲜水果</span>
+									<span>芒果</span>
+									<span>加州提子</span>
+									<span>亚马逊牛油果</span>
+								</div>
+								<div>查看更多 &gt;</div>
+							</div>
+							<Row>
+								<i-col :span='24'>
+						<div class='disflex'>
+							<div style="width: 20%">
+								<img style="display: inline-block; width: 100%; height: 355px; margin-top: 20px;" src="./img/2.jpeg" alt="">
+							</div>
+							<div class='disflex jcsb' style="width: 80%">
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+							</div>
+
+						</div>
+					</i-col>
+							</Row>
+					    </Card>
+					<i-col>
+						
+				</Row>
+				<Row>
+					<i-col :span='24'><i-col>
+				</Row>
+				<Row>
+					<i-col :span='24'><i-col>
+				</Row>
+			</i-col>
+			<i-col :span='24' class='mt50'>
+				<Row>
+					<i-col :span='24'>
+						<Card style="width:100%；">
+					        <div class='disflex jcsb'>
+								<div>
+									<span class="goods-title">新鲜水果</span>
+									<span>芒果</span>
+									<span>加州提子</span>
+									<span>亚马逊牛油果</span>
+								</div>
+								<div>查看更多 &gt;</div>
+							</div>
+							<Row>
+								<i-col :span='24'>
+						<div class='disflex'>
+							<div style="width: 20%">
+								<img style="display: inline-block; width: 100%; height: 355px; margin-top: 20px;" src="./img/2.jpeg" alt="">
+							</div>
+							<div class='disflex jcsb' style="width: 80%">
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+								<div class='center'>
+									<div>草莓</div>
+									<div>
+										<img style="width: 98%" src="./img/1.jpeg" alt="">
+									</div>
+									<div>￥30.00</div>
+								</div>
+							</div>
+
+						</div>
+					</i-col>
+							</Row>
+					    </Card>
+					<i-col>
+						
+				</Row>
+				<Row>
+					<i-col :span='24'><i-col>
+				</Row>
+				<Row>
+					<i-col :span='24'><i-col>
+				</Row>
+			</i-col>
+			<!-- 商品列表end -->
+			<i-col :span='24' style="margin-top: 200px;"></i-col>
+			<i-col :span='24'></i-col>
+		</Row>
+	</div>
+</body>
+</html>
+<script src="./js/vue.js"></script>
+<script src="./js/iview.js"></script>
+<script src="./js/axios.js"></script>
+<script>
+	new Vue({
+		el: '#app',
+		data:{
+			search: '',
+			cart: 1,
+			value1: 0
+		},
+		methods: {},
+		mounted () {}
+	}).mount
+</script>
