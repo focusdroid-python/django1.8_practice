@@ -1,4 +1,5 @@
 # 使用selery
+import app as app
 from django.conf import settings
 from django.core.mail import send_mail
 from celery import Celery
@@ -9,7 +10,8 @@ Celery('celery_tasks.tasks', broker='redis://192.168.1.104:6379/8') # 写tasks�
 
 
 # 定义任务函数
-@app.task # 给下面的加一些信息
+# 给下面的加一些信息
+@app.task
 def send_register_active_email(to_email, username, token):
     '''发送激活邮件'''
     subject = '天天生鲜欢迎信息'
