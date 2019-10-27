@@ -10,6 +10,7 @@ from itsdangerous import SignatureExpired
 from user.models import User
 import re
 import json
+from celery_tasks.tasks import send_register_active_email
 # from django.views.generic import View
 
 # Create your views here.
@@ -85,13 +86,13 @@ def register_handle(request):
     token = token.decode('utf8') # 解码
 
     # 发送邮件
-    subject = '天天生鲜欢迎信息'
-    message = ''
-    sender = settings.EMAIL_FROM # 发件人
-    receiver = [mail] # 收件人
-    html_message = '<h1>%s, 欢迎您成为天天生鲜注册会员</h1>请点击下面链接激活您的帐户<br/><a href="http://192.168.1.108:8000/user/active/%s">http://192.168.1.108:8000/user/active/%s</a>'%(username, token, token)
-    send_mail(subject, message, sender, receiver, html_message=html_message) # 发送带有html标签的内容时候需要使用html_message这个字段
-
+    # subject = '天天生鲜欢迎信息'
+    # message = ''
+    # sender = settings.EMAIL_FROM # 发件人
+    # receiver = [mail] # 收件人
+    # html_message = '<h1>%s, 欢迎您成为天天生鲜注册会员</h1>请点击下面链接激活您的帐户<br/><a href="http://192.168.1.108:8000/user/active/%s">http://192.168.1.108:8000/user/active/%s</a>'%(username, token, token)
+    # send_mail(subject, message, sender, receiver, html_message=html_message) # 发送带有html标签的内容时候需要使用html_message这个字段
+    send_register_active_email.delay(mail, username, token) # delay()是经过@app.task函数装饰以后才有的函数
 
 
     # 返回应答
@@ -171,9 +172,10 @@ def active(request, token):
         user.is_active = 1
         user.save()
 
-        # 激活之后的跳转
-        activeresult = {"status": "success", "msg": "激活成功"}
-        return JsonResponse(activeresult)
+        # 激活之后的跳转(应该直接提示激活成功)
+        # activeresult = {"status": "success", "msg": "激活成功"}
+        # return JsonResponse(activeresult)
+        return HttpResponse('邮箱激活成功')
 
     except SignatureExpired as e:
         # 激活链接已过期
