@@ -5,10 +5,11 @@ from celery import Celery
 
 # 在人物处理者加这几行代码
 # 防止calery在只用时候报错，需要进行一些初始化数据
-import os
-import django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dailyfresh.settings")
-django.setup()
+# 在celery处理端添加以下几行代码
+# import os
+# import django
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dailyfresh.settings")
+# django.setup()
 
 # 创建一个Celery的实例对象
 app = Celery('celery_tasks.tasks', broker='redis://192.168.1.104:6379/8') # 写tasks文件的路径

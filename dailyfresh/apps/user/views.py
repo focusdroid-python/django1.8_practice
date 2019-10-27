@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 # from django.core.urlresolvers import reverse # 处理前后端未分离的跳转
-from django.views.decorators.csrf import csrf_exempt # 处理csrf报错 @csrf_exempt
-from django.http import HttpResponse, JsonResponse # 处理返回数据
+from django.views.decorators.csrf import csrf_exempt  # 处理csrf报错 @csrf_exempt
+from django.http import HttpResponse, JsonResponse  # 处理返回数据
 from django.core.mail import send_mail
-from django.conf import settings # 使用其中 SECRET_KEY 作为密钥  使用其中的send_mail配置
+from django.conf import settings  # 使用其中 SECRET_KEY 作为密钥  使用其中的send_mail配置
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
@@ -11,7 +11,8 @@ from user.models import User
 import re
 import json
 from celery_tasks.tasks import send_register_active_email
-# from django.views.generic import View
+from django.views.generic import View
+
 
 # Create your views here.
 
@@ -19,6 +20,7 @@ from celery_tasks.tasks import send_register_active_email
 def register(request):
     '''显示注册页面'''
     return render(request, 'register.html')
+
 
 # 解除django框架csrf限制
 @csrf_exempt
@@ -75,25 +77,26 @@ def register_handle(request):
     # user.single = single
     # user.save()
     user = User.objects.create_user(username, mail, passwd)
-    user.is_active = 0 # 设置账户未激活，默认是已激活
+    user.is_active = 0  # 设置账户未激活，默认是已激活
     user.save()
 
     # 发送激活邮件，包含激活链接,并且要把身份信息加密
     # 加密用户身份信息,生成激活的token
     serializer = Serializer(settings.SECRET_KEY, 3600)
     info = {'confirm': user.id}
-    token = serializer.dumps(info) # bytes
-    token = token.decode('utf8') # 解码
+    token = serializer.dumps(info)  # bytes
+    token = token.decode('utf8')  # 解码
 
     # 发送邮件
-    # subject = '天天生鲜欢迎信息'
-    # message = ''
-    # sender = settings.EMAIL_FROM # 发件人
-    # receiver = [mail] # 收件人
-    # html_message = '<h1>%s, 欢迎您成为天天生鲜注册会员</h1>请点击下面链接激活您的帐户<br/><a href="http://192.168.1.108:8000/user/active/%s">http://192.168.1.108:8000/user/active/%s</a>'%(username, token, token)
-    # send_mail(subject, message, sender, receiver, html_message=html_message) # 发送带有html标签的内容时候需要使用html_message这个字段
-    send_register_active_email.delay(mail, username, token) # delay()是经过@app.task函数装饰以后才有的函数
-
+    subject = '天天生鲜欢迎信息'
+    message = ''
+    sender = settings.EMAIL_FROM  # 发件人
+    receiver = [mail]  # 收件人
+    html_message = '<h1>%s, 欢迎您成为天天生鲜注册会员</h1>请点击下面链接激活您的帐户<br/><a href="http://192.168.1.108:8000/user/active/%s">http://192.168.1.108:8000/user/active/%s</a>' % (
+    username, token, token)
+    send_mail(subject, message, sender, receiver, html_message=html_message)  # 发送带有html标签的内容时候需要使用html_message这个字段
+    # 异步celery有点问题,启动需要在目标机器启动使用
+    # send_register_active_email.delay(mail, username, token) # delay()是经过@app.task函数装饰以后才有的函数
 
     # 返回应答
     response = {"status": "success", "msg": "注册成功"}
@@ -182,9 +185,20 @@ def active(request, token):
         expireToken = {"status": "error", "msg": "激活链接已过期"}
         return JsonResponse(expireToken)
 
-def login(request):
-    '''显示登录页面'''
-    return render(request, 'login.html')
+
+# def login(request):
+#     '''显示登录页面'''
+#     return render(request, 'login.html')
+class LoginView(View):
+    '''登录的类视图'''
+
+    def get(self, request):
+        '''显示登录页面'''
+        return render(request, 'login.html')
+
+
+
+
 
 
 
