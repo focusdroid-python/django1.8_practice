@@ -1,12 +1,17 @@
 # 使用selery
-import app as app
 from django.conf import settings
 from django.core.mail import send_mail
 from celery import Celery
-import time
+
+# 在人物处理者加这几行代码
+# 防止calery在只用时候报错，需要进行一些初始化数据
+import os
+import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dailyfresh.settings")
+django.setup()
 
 # 创建一个Celery的实例对象
-Celery('celery_tasks.tasks', broker='redis://192.168.1.104:6379/8') # 写tasks文件的路径
+app = Celery('celery_tasks.tasks', broker='redis://192.168.1.104:6379/8') # 写tasks文件的路径
 
 
 # 定义任务函数
@@ -22,4 +27,4 @@ def send_register_active_email(to_email, username, token):
     username, token, token)
 
     send_mail(subject, message, sender, receiver, html_message=html_message)  # 发送带有html标签的内容时候需要使用html_message这个字段
-    time.slepp(5)
+    # time.slepp(5)
