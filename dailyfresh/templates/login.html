@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>登录</title>
+	<link rel="stylesheet" href="./css/iview.css">
+	<link rel="stylesheet" type="text/css" href="./css/common.css">
+	<style type="text/css" media="screen">
+		#app {
+			padding-top: 50px;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<i-row>
+			<i-col :span='24'>
+				用户名：
+				<i-input v-model="username" placeholder="Enter something..." style="width: 300px" />
+			</i-col>
+			<i-col :span='24'>
+				密码：
+				<i-input v-model="passwd" placeholder="Enter something..." style="width: 300px" />
+			</i-col>
+			<i-col :span='24'>
+				<Checkbox v-model="rempasswd">记住密码</Checkbox>
+			</i-col>
+			<i-col :span='24'>
+				<i-button type="success" long style="width: 300px" @click='login'>登录</i-button>
+			</i-col>
+			<i-col :span='24'>
+			</i-col>
+		</i-row>
+	</div>
+</body>
+</html>
+<script src="./js/vue.js"></script>
+<script src="./js/iview.js"></script>
+<script src="./js/axios.js"></script>
+<script>
+	new Vue({
+		el: '#app',
+		data:{
+			username: '123',
+			passwd: '',
+			rempasswd: false
+		},
+		mounted () {},
+		methods: {
+			login () {
+				axios.get('http://api.github.com').then((res) => {
+					console.log(res)
+				})
+			}
+		}
+	}).mount
+</script>

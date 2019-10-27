@@ -1,13 +1,16 @@
 from django.shortcuts import render, redirect
-from django.core.urlresolvers import reverse
+# from django.core.urlresolvers import reverse # 处理前后端未分离的跳转
+from django.views.decorators.csrf import csrf_exempt # 处理csrf报错 @csrf_exempt
+from django.http import HttpResponse, JsonResponse # 处理返回数据
+from django.core.mail import send_mail
+from django.conf import settings # 使用其中 SECRET_KEY 作为密钥  使用其中的send_mail配置
+
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import SignatureExpired
+from user.models import User
 import re
 import json
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, JsonResponse
-from user.models import User
 # from django.views.generic import View
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-
 
 # Create your views here.
 
@@ -74,7 +77,21 @@ def register_handle(request):
     user.is_active = 0 # 设置账户未激活，默认是已激活
     user.save()
 
-    # 发送激活邮件，包含激活链接
+    # 发送激活邮件，包含激活链接,并且要把身份信息加密
+    # 加密用户身份信息,生成激活的token
+    serializer = Serializer(settings.SECRET_KEY, 3600)
+    info = {'confirm': user.id}
+    token = serializer.dumps(info) # bytes
+    token = token.decode('utf8') # 解码
+
+    # 发送邮件
+    subject = '天天生鲜欢迎信息'
+    message = ''
+    sender = settings.EMAIL_FROM # 发件人
+    receiver = [mail] # 收件人
+    html_message = '<h1>%s, 欢迎您成为天天生鲜注册会员</h1>请点击下面链接激活您的帐户<br/><a href="http://192.168.1.108:8000/user/active/%s">http://192.168.1.108:8000/user/active/%s</a>'%(username, token, token)
+    send_mail(subject, message, sender, receiver, html_message=html_message) # 发送带有html标签的内容时候需要使用html_message这个字段
+
 
 
     # 返回应答
@@ -139,6 +156,34 @@ def register_handle(request):
 #         response = {"status": "success", "msg": "注册成功"}
 #         return JsonResponse(response)
 #         # return redirect(reverse('goods:index')) # 前后端未分离写法
+
+def active(request, token):
+    '''用户激活链接'''
+    # 进行解密， 获取需要激活的信息
+    serializer = Serializer(settings.SECRET_KEY, 3600)
+
+    try:
+        info = serializer.loads(token)
+        # 获取待激活用户id
+        user_id = info['confirm']
+        # 根据id获取用户信息
+        user = User.objects.get(id=user_id)
+        user.is_active = 1
+        user.save()
+
+        # 激活之后的跳转
+        activeresult = {"status": "success", "msg": "激活成功"}
+        return JsonResponse(activeresult)
+
+    except SignatureExpired as e:
+        # 激活链接已过期
+        expireToken = {"status": "error", "msg": "激活链接已过期"}
+        return JsonResponse(expireToken)
+
+def login(request):
+    '''显示登录页面'''
+    return render(request, 'login.html')
+
 
 
 
