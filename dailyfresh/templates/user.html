@@ -56,9 +56,14 @@
 									<h2>基本信息</h2>
 								</div>
 								<div class='user-menage'>
-									<div><span>用户姓名：</span><span>tree</span></div>
-									<div><span>联系方式：</span><span>15701229789</span></div>
-									<div><span>联系地址：</span><span>北京市昌平区生命科学园21号</span></div>
+									<div><span>用户姓名：</span><span>{{user.username}}</span></div>
+									{% if address %}
+									<div><span>联系方式：</span><span>{{address.phone}}</span></div>
+									<div><span>联系地址：</span><span>{{address.addr}}</span></div>
+									{% else %}
+									<div><span>联系方式：</span><span>无默认联系方式</span></div>
+									<div><span>联系地址：</span><span>无默认联系地址</span></div>
+									{% endif %}
 								</div>
 							</div>
 
@@ -68,77 +73,43 @@
 							<div>
 								<Row>
 									<i-col :span='24'>
-										<Card style="width:100%；">
+										<Card style="width:100%;">
 											<Row>
 												<i-col :span='24'>
 													<div class='disflex'>
-												<div class='disflex jcsb' style="width: 100%">
-													<div class='center'>
-														<div>
-															<img style="width: 98%" src="/static/img/1.jpeg" alt="">
-														</div>
-														<div>草莓</div>
-														<div>
-															<span>￥30.00</span>
-															<span>28.60 / 500g</span>
-															<span>
-																<img  class='back-img' src="/static/img/cart.jpg" alt="">
-															</span>
-														</div>
-													</div>
-													<div class='center'>
-														<div>
-															<img style="width: 98%" src="/static/img/1.jpeg" alt="">
-														</div>
-														<div>草莓</div>
-														<div>
-															<span>￥30.00</span>
-															<span>28.60 / 500g</span>
-															<span>
-																<img  class='back-img' src="/static/img/cart.jpg" alt="">
-															</span>
-														</div>
-													</div>
-													<div class='center'>
-														<div>
-															<img style="width: 98%" src="/static/img/1.jpeg" alt="">
-														</div>
-														<div>草莓</div>
-														<div>
-															<span>￥30.00</span>
-															<span>28.60 / 500g</span>
-															<span>
-																<img  class='back-img' src="/static/img/cart.jpg" alt="">
-															</span>
-														</div>
-													</div>
-													<div class='center'>
-														<div>
-															<img style="width: 98%" src="/static/img/1.jpeg" alt="">
-														</div>
-														<div>草莓</div>
-														<div>
-															<span>￥30.00</span>
-															<span>28.60 / 500g</span>
-															<span>
-																<img  class='back-img' src="/static/img/cart.jpg" alt="">
-															</span>
-														</div>
-													</div>
-													<div class='center'>
-														
-														<div>
-															<img style="width: 98%" src="/static/img/1.jpeg" alt="">
-														</div>
-														<div>草莓</div>
-														<div>
-															<span>￥30.00</span>
-															<span>28.60 / 500g</span>
-															<span>
-																<img  class='back-img' src="/static/img/cart.jpg" alt="">
-															</span>
-														</div>
-													</div>
+												<div style="width: 100%">
+													<ul class='disflex'>
+														{% for goods in goods_li %}
+														<li class='center'>
+															<div>
+																<img class="img" src="{{goods.image.url}}" alt="">
+																</div>
+																	<div>{{goods.name}}</div>
+																<div>
+																<span>￥{{goods.price}}</span>
+																	<span>{{goods.price}} / {{goods.unite}}</span>
+																<span>
+																	<img  class='back-img' src="/static/img/cart.jpg" alt="">
+																</span>
+															</div>
+														</li>
+														{% empty %}
+														无历史浏览记录
+														{% endfor %}
+														<!--<li class='center'>
+															<div>
+																<img class="img" src="/static/img/1.jpeg" alt="">
+																</div>
+																	<div>草莓</div>
+																<div>
+																<span>￥30.00</span>
+																	<span>28.60 / 500g</span>
+																<span>
+																	<img  class='back-img' src="/static/img/cart.jpg" alt="">
+																</span>
+															</div>
+														</li>-->
+													</ul>
 												</div>
 
 													</div>
