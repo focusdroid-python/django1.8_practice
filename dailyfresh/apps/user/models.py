@@ -10,7 +10,21 @@ class User(AbstractUser, BaseModel):
         verbose_name = '用户'
         verbose_name_plural = verbose_name
 
-
+class AddressManager(models.Manager):
+    '''地址模型管理器类'''
+    # 1. 改变原有的结果集：all()
+    # 2. 封装方法：用户操作模型类对应的数据表（增删改查）
+    def get_default_address(self, user):
+        '''获取用户的默认收货地址'''
+        # self.model:获取self对象所在的模型类
+        try:
+            # address = Address.objects.get(user=user, is_default=True) # 避免下面的Address这个类名字变化之后引发报错，使用self.model来获取
+            # address = self.model.objects.get(user=user, is_default=True) # self就是AddressManager这个类的，可以调用Manager这个类的get方法
+            address = self.get(user=user, is_default=True)
+        except self.model.DoesNotExist:
+            # 不存在默认收货地址
+            address = None
+        return address
 
 class Address(BaseModel):
     '''地址模型类'''
@@ -21,6 +35,7 @@ class Address(BaseModel):
     phone = models.CharField(max_length=11, verbose_name='联系电话')
     is_default = models.BooleanField(default=False, verbose_name='是否默认')
 
+    objects = AddressManager()
     class Meta:
         db_table = 'df_address'
         verbose_name = '地址'

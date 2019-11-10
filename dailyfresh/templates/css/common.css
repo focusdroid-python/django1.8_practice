@@ -1,3 +1,7 @@
+* {
+	margin: 0;
+	padding: 0;
+}
 .disflex {
 	display: flex;
 }
@@ -26,4 +30,86 @@
 	font-size: 18px;
 	color: yellowgreen;
 	margin-right: 30px;
+}
+.plf20 {
+	padding: 0 20px;
+}
+.user-title {
+	height: 40px;
+	line-height: 40px;
+	background-color: #ccc;
+}
+.ml20 {
+	margin-left: 20px;
+}
+.mr20 {
+	margin-right: 20px;	
+}
+.mt20 {
+	margin-top: 20px;	
+}
+.mb20 {
+	margin-bottom: 20px;
+}
+.pt20 {
+	padding-top: 20px;
+}
+.curpon {
+	cursor: pointer;
+}
+ul {
+	list-style: none;
+}
+.user-center {
+	background-color: #ccc;
+	height: calc(100vh);
+	text-align: center;
+}
+.user-menage {
+	background-color: #ccc;
+	padding: 20px;
+}
+.back-img {
+	display: inline-block;
+    width: 36px;
+    height: 34px;
+
+}
+.active {
+	color: #e96d02;
+}
+.img {
+	display: inline-block;
+	width: 50px;
+	height: 50px;
+}
+.lh50 {
+	line-height: 50px;
+}
+.lh100 {
+	line-height: 100px;
+}
+
+.line {
+	border-left: 1px solid #ccc;	
+}
+.price {
+	text-align: center;
+}
+.ml40 {
+	margin-left: 40px;
+}
+.goods-title {
+	display: flex;
+    justify-content: space-around;
+    height: 40px;
+    background-color: #ccc;
+    line-height: 40px;
+}
+#cart .ivu-checkbox {
+	line-height: 50px;
+}
+.totalPrice {
+	height: 80px;
+	background-color: orange;
 }

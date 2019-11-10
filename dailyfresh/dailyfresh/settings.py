@@ -51,7 +51,7 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -135,3 +135,20 @@ EMAIL_HOST_PASSWORD = 'wangxu19940412'
 # 收件人看到的发件人
 DEFAULT_FROM_EMAIL = '天天生鲜<focusdroid@163.com>'
 EMAIL_FROM = '天天生鲜<focusdroid@163.com>' # 必须和EMAIL_HOSTUSER 地址一致否则邮件发送不了
+
+# django的缓存配置
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://192.168.1.104:6379/9",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        }
+    }
+}
+# 配置session存储
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
+# 未登录跳转地址
+LOGIN_URL='/user/login'

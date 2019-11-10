@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>收货地址</title>
+	<link rel="stylesheet" href="./css/iview.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/common.css">
+	<script src="/static/js/vue.js"></script>
+	<script src="/static/js/iview.js"></script>
+	<script src="/static/js/axios.js"></script>
+</head>
+<body>
+		<div id="app">
+		<Row :gutter=20>
+			<i-col :span='24'>
+				<div class='disflex jcsb plf20 user-title'>
+					<div>欢迎来到天天生鲜</div>
+					<div>
+						{% if user.is_authenticated %}
+						<span class='ml20 curpon'>欢迎您： <span>{{user.username}}</span></span>
+						<span><a href="{% url 'user:logout' %}">退出登录</a></span>
+						{% else %}
+						<span class='ml20 curpon'><a href="{% url 'user:login' %}" title="登录">登录</a></span>
+						<span class='ml20 curpon'><a href="{% url 'user:register' %}" title="注册">注册</a></span>
+						{% endif %}
+						<span class='ml20 curpon'><a href="{% url 'user:user' %}" title="用户中心">用户中心</a></span>
+						<span class='ml20 curpon'><a href="/user/cart" title="购物车">购物车</a></span>
+						<span class='ml20 curpon'><a href="{% url 'user:order' %}" title="我的订单">我的订单</a></span>
+					</div>
+				</div>
+			</i-col>
+			<i-col :span=24>
+				<div style='margin: 0 auto; width: 50%' class='mt20 mb20'>
+					<i-input v-model.trim="search" search enter-button="搜索" placeholder="请输入搜索商品" />
+				</div>
+			</i-col>
+			<i-col :span=24>
+				<Row :gutter=20>
+					<i-col :span='5' :offset='1'>
+						<div class='user-center'>
+							<div class='pt20'>用户中心</div>
+							<div>
+								<ul>
+									<li class='mt20'><a href="/static/user.html">个人信息</a></li>
+									<li class='mt20'><a href="/static/order.html">全部订单</a></li>
+									<li class='mt20'><a class='active' href="/static/address.html">收货地址</a></li>
+								</ul>
+							</div>
+						</div>
+					</i-col>
+					<i-col :span='15'>
+						<div>
+							<div>
+								<div>
+									<h2>收货地址</h2>
+								</div>
+								<div class='user-menage'>
+									<div>当前地址：</div>
+									<div>北京市 昌平区 生命科学园21号 （tree 收） 15701220000</div>
+								</div>
+							</div>
+							<div>
+								<div>
+									<h2>编辑地址</h2>
+								</div>
+								<div class='user-menage'>
+									<div class='disflex mt20'>
+										<div>收件人</div>
+										<div><i-input v-model.trim='name' placehplder='收件人名字'/>	</div>
+									</div>
+									<div class='disflex mt20'>
+										<div>详细地址</div>
+										<div><i-input v-model.trim='address' type="textarea" placehplder='详细地址'/>	</div>
+									</div>
+									<div class='disflex mt20'>
+										<div>邮编</div>
+										<div><i-input v-model.trim='mail' placehplder='邮政编码'/>	</div>
+									</div>
+									<div class='disflex mt20'>
+										<div>手机</div>
+										<div><i-input v-model.trim='phone' placehplder='手机号码'/>	</div>
+									</div>
+									<div class='mt20'>
+										<i-button @click='submit'>提交</i-button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</i-col>
+				</Row>
+			</i-col>
+		</Row>
+	</div>
+</body>
+</html>
+
+<script>
+	new Vue({
+		el: '#app',
+		data:{
+			search: '',
+			name: '',
+			address: '',
+			mail: '',
+			phone: ''
+		},
+		methods: {
+			submit () {
+				alert('提交数据')
+			},
+		},
+		mounted () {}
+	})
+</script>

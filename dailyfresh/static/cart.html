@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>购物车</title>
+	<link rel="stylesheet" href="/static/css/iview.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/common.css">
+	<script src="/static/js/vue.js"></script>
+	<script src="/static/js/iview.js"></script>
+	<script src="/static/js/axios.js"></script>
+</head>
+<body>
+		<div id="app">
+		<Row :gutter=20>
+			<i-col :span='24'>
+				<div class='disflex jcsb plf20 user-title'>
+					<div>欢迎来到天天生鲜</div>
+					<div>
+						<span class='ml20 curpon'><a href="/static/login.html" title="登录">登录</a></span>
+						<span class='ml20 curpon'><a href="/static/register.html" title="注册">注册</a></span>
+						<span class='ml20 curpon'><a href="/static/user.html" title="用户中心">用户中心</a></span>
+						<span class='ml20 curpon'><a href="/static/cart.html" title="购物车">购物车</a></span>
+						<span class='ml20 curpon'><a href="/static/order.html" title="我的订单">我的订单</a></span>
+					</div>
+				</div>
+			</i-col>
+			<i-col :span=24>
+				<div style='margin: 0 auto; width: 50%' class='mt20 mb20'>
+					<i-input v-model.trim="search" search enter-button="搜索" placeholder="请输入搜索商品" />
+				</div>
+			</i-col>
+			<i-col :span=22>
+				<div>
+					<ul class='goods-title'>
+						<li></li>
+						<li>商品名称</li>
+						<li>商品单位</li>
+						<li>商品价格</li>
+						<li>数量</li>
+						<li>小计</li>
+						<li>操作</li>
+					</ul>
+				</div>
+				<div id='cart'>
+					<div class="disflex ml20 mt20" v-for='(item) in goodsList' :key='item.id'>
+						<div class='ml20 lh50' style='width: 100%;'>
+							<checkbox-group v-model="checkAllGroup" @on-change="getChangeChecked(item)">
+						        <Checkbox :label="item.id" class='disflex '>
+						        	<div class="disflex jcsb ml20" style='width: 100%;'>
+										<div><img class='img' src="/static/img/1.jpeg" alt=""></div>
+										<div>
+											<div>{{item.name}}</div>
+											<div><span>{{item.price}}</span>元/{{item.quality}}</div>
+										</div>
+										<div>
+											{{item.quality}}
+										</div>
+										<div>
+											{{item.price}}
+										</div>
+										<div>
+											<input-number v-model="number" readonly></input-number>
+										</div>
+										<div>
+											{{item.price}}
+										</div>
+										<div>
+											<i-button @click='deleteItem(item)'>删除</i-button>
+										</div>
+									</div>	
+						        </Checkbox>
+						    </checkbox-group>
+						</div>
+						
+					</div>
+					<!-- 合计总价格，结算start -->
+						<div>
+							<div class='totalPrice'>
+								总价： 200元
+							</div>
+							<div>
+								<i-button>结算</i-button>
+							</div>
+						</div>
+						<!-- 合计总价格，结算end -->
+				</div>
+			</i-col>
+		</Row>
+	</div>
+</body>
+</html>
+
+<script>
+	new Vue({
+		el: '#app',
+		data:{
+			indeterminate: false,
+                checkAll: false,
+			checkAllGroup: [],
+			number: 1,
+			search: '',
+			goodsList: [
+				{
+					id: 1,
+					img: '/static/img/1.jpeg',
+					name: '奇异果',
+					price: '25.80',
+					quality: '500g',
+					number: 1,
+					totalPrice: 25.8,
+					status: 1
+				},
+				{
+					id: 2,
+					img: '/static/img/1.jpeg',
+					name: '苹果',
+					price: '11.80',
+					quality: '500g',
+					number: 1,
+					totalPrice: 11.80,
+					status: 1
+				},
+				{
+					id: 3,
+					img: '/static/img/1.jpeg',
+					name: '奇异果',
+					price: '25.80',
+					quality: '500g',
+					number: 1,
+					totalPrice: 25.8,
+					status: 1
+				}
+			]
+		},
+		methods: {
+			getChangeChecked (ele) {
+				console.log(ele)
+			},
+			deleteItem (ele) {
+				console.log(ele)
+			}
+			
+		},
+		mounted () {}
+	})
+</script>

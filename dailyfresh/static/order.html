@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>订单页面</title>
+	<link rel="stylesheet" href="./css/iview.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/common.css">
+	<script src="/static/js/vue.js"></script>
+	<script src="/static/js/iview.js"></script>
+	<script src="/static/js/axios.js"></script>
+</head>
+<body>
+		<div id="app">
+		<Row>
+			<i-col span='24'>
+				<div class='disflex jcsb plf20 user-title'>
+					<div>欢迎来到天天生鲜</div>
+					<div>
+						{% if user.is_authenticated %}
+						<span class='ml20 curpon'>欢迎您： <span>{{user.username}}</span></span>
+						<span><a href="{% url 'user:logout' %}">退出登录</a></span>
+						{% else %}
+						<span class='ml20 curpon'><a href="{% url 'user:login' %}" title="登录">登录</a></span>
+						<span class='ml20 curpon'><a href="{% url 'user:register' %}" title="注册">注册</a></span>
+						{% endif %}
+						<span class='ml20 curpon'><a href="{% url 'user:user' %}" title="用户中心">用户中心</a></span>
+						<span class='ml20 curpon'><a href="/user/cart" title="购物车">购物车</a></span>
+						<span class='ml20 curpon'><a href="{% url 'user:order' %}" title="我的订单">我的订单</a></span>
+					</div>
+				</div>
+			</i-col>
+			<i-col span='24'>
+				<div style='margin: 0 auto; width: 50%' class='mt20 mb20'>
+					<i-input v-model.trim="search" search enter-button="搜索" placeholder="请输入搜索商品" />
+				</div>
+			</i-col>
+			<i-col span='24'>
+				<Row>
+					<i-col span='5' offset='1'>
+						<div class='user-center'>
+							<div class='pt20'>用户中心</div>
+							<div>
+								<ul>
+									<li class='mt20'><a href="/static/user.html">个人信息</a></li>
+									<li class='mt20'><a class='active' href="/static/order.html">全部订单</a></li>
+									<li class='mt20'><a href="/static/address.html">收货地址</a></li>
+								</ul>
+							</div>
+						</div>
+					</i-col>
+					<i-col span='18'>
+						<!-- 订单模块start -->
+
+						<div class='mt20'>
+							<!-- <Card style="width:100%">
+						        <p slot="title">
+						            <span class='ml20'>2019年11月4日16:59:27</span>
+						            <span class='ml20'>订单编号：51651651651</span>
+						            <span class='ml20 active'>未支付</span>
+						        </p>
+						        <ul>
+						           <li>
+						           		<div class='disflex'>
+						           			<div>
+							           			<ul>
+							           				<li class="disflex">
+							           					<div class='ml20'><img class='img' src="./img/1.jpeg" alt=""></div>
+							           					<div class='ml20 lh50'>苹果</div>
+							           					<div class='ml20 lh50'><span>11.80元</span>/<span>500g</span></div>
+							           					<div class='ml20 lh50'>1</div>
+							           					<div class='ml20 lh50'>11.80元</div>
+							           				</li>
+							           				<li class="disflex">
+							           					<div class='ml20'><img class='img' src="./img/1.jpeg" alt=""></div>
+							           					<div class='ml20 lh50'>苹果</div>
+							           					<div class='ml20 lh50'><span>11.80元</span>/<span>500g</span></div>
+							           					<div class='ml20 lh50'>1</div>
+							           					<div class='ml20 lh50'>11.80元</div>
+							           				</li>
+							           			</ul>
+							           		</div>
+							           		<div class='line ml20 disflex'>
+							           			<div class='price-one ml20 lh100 price'>33.60</div>
+							           			<div class='price-two ml20 lh100 price'>待付款</div>
+							           			<div class='price-three ml20 lh100 price'><i-button type='success'>去付款</i-button></div>
+							           		</div>
+						           		</div>
+						           </li>
+						        </ul>
+						    </Card>
+ -->
+
+						    <Card style="width:100%" class='mt20' v-for='(item) in goodsList' :key='item.id'>
+						        <p slot="title">
+						            <span class='ml20'>{{item.time}}</span>
+						            <span class='ml20'>订单编号：{{item.ordernumber}}</span>
+						            <span class='ml20 active'>{{item.payResult}}</span>
+						        </p>
+						        <ul>
+						           <li>
+						           		<div class='disflex'>
+						           			<div>
+							           			<ul>
+							           				<li class="disflex" v-for='(sonitem) in item.list' :key='item.id'>
+							           					<div class='ml20'><img class='img' :src="sonitem.img" alt=""></div>
+							           					<div class='ml40 lh50'>{{sonitem.title}}</div> 
+							           					<div class='ml40 lh50'><span>{{sonitem.price}}</span>/<span>{{sonitem.quality}}</span></div>
+							           					<div class='ml40 lh50'>{{sonitem.number}}</div>
+							           					<div class='ml40 lh50'>{{sonitem.utilPrice}}</div>
+							           				</li>
+							           			</ul>
+							           		</div>
+							           		<div class='line ml20 disflex'>
+							           			<div class='price-one ml20 lh100 price' style='margin-left: 100px;'>{{item.totalPrice}}元</div>
+							           			<div class='price-two ml20 lh100 price' style='margin-left: 100px;'>{{item.payStatus}}</div>
+							           			<div class='price-three ml20 lh100 price' style='margin-left: 100px;'><i-button type='success'>去付款</i-button></div>
+							           		</div>
+						           		</div>
+						           </li>
+						        </ul>
+						    </Card>
+
+
+
+						</div>
+						<!-- 订单模块end -->
+					</i-col>
+				</Row>
+			</i-col>
+		</Row>
+	</div>
+</body>
+</html>
+
+<script>
+	new Vue({
+		el: '#app',
+		data:{
+			goodsList: [
+				{
+					id: 1,
+					time: '2019年11月5日09:40:23',
+					ordernumber: '56546516',
+					payResult: '已支付',
+					list: [
+						{
+							id: 11,
+							title: '苹果',
+							price: '11.80',
+							quality: '500g',
+							number: '1',
+							img: './img/2.jpeg',
+							utilPrice: '11.80',
+						},{
+							id: 12,
+							title: '苹果',
+							price: '11.80',
+							quality: '500g',
+							number: '1',
+							img: './img/1.jpeg',
+							utilPrice: '11.80',
+						}
+					],
+					totalPrice: '25.60',
+					payStatus: '待付款',
+				},{
+					id: 2,
+					time: '2019年11月5日09:40:23',
+					ordernumber: '56546516',
+					payResult: '已支付',
+					list: [
+						{
+							id: 21,
+							title: '香蕉',
+							price: '11.80',
+							quality: '500g',
+							number: '1',
+							img: './img/1.jpeg',
+							utilPrice: '11.80',
+						},{
+							id: 22,
+							title: '香蕉',
+							price: '11.80',
+							quality: '500g',
+							number: '1',
+							img: './img/2.jpeg',
+							utilPrice: '11.80',
+						}
+					],
+					totalPrice: '25.60',
+					payStatus: '待付款',
+				},{
+					id: 2,
+					time: '2019年11月5日09:40:23',
+					ordernumber: '56546516',
+					payResult: '已支付',
+					list: [
+						{
+							id: 21,
+							title: '香蕉',
+							price: '11.80',
+							quality: '500g',
+							number: '1',
+							img: './img/1.jpeg',
+							utilPrice: '11.80',
+						},{
+							id: 22,
+							title: '香蕉',
+							price: '11.80',
+							quality: '500g',
+							number: '1',
+							img: './img/2.jpeg',
+							utilPrice: '11.80',
+						}
+					],
+					totalPrice: '25.60',
+					payStatus: '待付款',
+				}
+			],
+			search: ''
+		},
+		methods: {},
+		mounted () {}
+	})
+</script>

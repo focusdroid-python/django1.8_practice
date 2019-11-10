@@ -15,6 +15,23 @@
 <body>
 	<div id="app">
 		<Row :gutter='20'>
+			<i-col :span='24'>
+				<div class='disflex jcsb plf20 user-title'>
+					<div>欢迎来到天天生鲜</div>
+					<div>
+						{% if user.is_authenticated %}
+						<span class='ml20 curpon'>欢迎您： <span>{{user.username}}</span></span>
+						<span><a href="{% url 'user:logout' %}">退出登录</a></span>
+						{% else %}
+						<span class='ml20 curpon'><a href="{% url 'user:login' %}" title="登录">登录</a></span>
+						<span class='ml20 curpon'><a href="{% url 'user:register' %}" title="注册">注册</a></span>
+						{% endif %}
+						<span class='ml20 curpon'><a href="{% url 'user:user' %}" title="用户中心">用户中心</a></span>
+						<span class='ml20 curpon'><a href="/user/cart" title="购物车">购物车</a></span>
+						<span class='ml20 curpon'><a href="{% url 'user:order' %}" title="我的订单">我的订单</a></span>
+					</div>
+				</div>
+			</i-col>
 			<i-col :span='24' class="disflex center">
 				<div class='disflex'>
 					<div>
@@ -71,7 +88,7 @@
 			<i-col :span='24' class='mt50'>
 				<Row>
 					<i-col :span='24'>
-						<Card style="width:100%；">
+						<Card style="width:100%;">
 					        <div class='disflex jcsb'>
 								<div>
 									<span class="goods-title">新鲜水果</span>
@@ -304,7 +321,7 @@
 								<div class='center'>
 									<div>草莓</div>
 									<div>
-										<img style="width: 98%" src="/static/`img/1.jpeg" alt="">
+										<img style="width: 98%" src="/static/img/1.jpeg" alt="">
 									</div>
 									<div>￥30.00</div>
 								</div>
@@ -344,5 +361,5 @@
 		},
 		methods: {},
 		mounted () {}
-	}).mount
+	})
 </script>

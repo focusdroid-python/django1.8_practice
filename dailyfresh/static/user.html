@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>user</title>
+	<link rel="stylesheet" type="text/css" href="/static/css/iview.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/common.css">
+	<script src="/static/js/vue.js"></script>
+	<script src="/static/js/iview.js"></script>
+	<script src="/static/js/axios.js"></script>
+</head>
+<body>
+	<div id="app">
+		<Row>
+			<i-col :span='24'>
+				<div class='disflex jcsb plf20 user-title'>
+					<div>欢迎来到天天生鲜</div>
+					<div>
+						<span class='ml20 curpon'><a href="/static/login.html" title="登录">登录</a></span>
+						<span class='ml20 curpon'><a href="/static/register.html" title="注册">注册</a></span>
+						<span class='ml20 curpon'><a href="/static/user.html" title="用户中心">用户中心</a></span>
+						<span class='ml20 curpon'><a href="/static/cart.html" title="购物车">购物车</a></span>
+						<span class='ml20 curpon'><a href="/static/order.html" title="我的订单">我的订单</a></span>
+					</div>
+				</div>
+			</i-col>
+			<i-col :span=24>
+				<div style='margin: 0 auto; width: 50%' class='mt20 mb20'>
+					<i-input v-model.trim="search" search enter-button="搜索" placeholder="请输入搜索商品" />
+				</div>
+			</i-col>
+			<i-col :span=24>
+				<Row :gutter=20>
+					<i-col :span='5' :offset='1'>
+						<div class='user-center'>
+							<div class='pt20'>用户中心</div>
+							<div>
+								<ul>
+									<li class='mt20'><a class='active' href="/static/user.html">个人信息</a></li>
+									<li class='mt20'><a href="/static/order.html">全部订单</a></li>
+									<li class='mt20'><a href="/static/address.html">收货地址</a></li>
+								</ul>
+							</div>
+						</div>
+					</i-col>
+					<i-col :span='15'>
+						<div>
+							<div>
+								<div class='mt20'>
+									<h2>基本信息</h2>
+								</div>
+								<div class='user-menage'>
+									<div><span>用户姓名：</span><span>tree</span></div>
+									<div><span>联系方式：</span><span>15701229789</span></div>
+									<div><span>联系地址：</span><span>北京市昌平区生命科学园21号</span></div>
+								</div>
+							</div>
+
+							<div class='mt20'>
+								<h2>最近浏览</h2>
+							</div>
+							<div>
+								<Row>
+									<i-col :span='24'>
+										<Card style="width:100%；">
+											<Row>
+												<i-col :span='24'>
+													<div class='disflex'>
+												<div class='disflex jcsb' style="width: 100%">
+													<div class='center'>
+														<div>
+															<img style="width: 98%" src="/static/img/1.jpeg" alt="">
+														</div>
+														<div>草莓</div>
+														<div>
+															<span>￥30.00</span>
+															<span>28.60 / 500g</span>
+															<span>
+																<img  class='back-img' src="/static/img/cart.jpg" alt="">
+															</span>
+														</div>
+													</div>
+													<div class='center'>
+														<div>
+															<img style="width: 98%" src="/static/img/1.jpeg" alt="">
+														</div>
+														<div>草莓</div>
+														<div>
+															<span>￥30.00</span>
+															<span>28.60 / 500g</span>
+															<span>
+																<img  class='back-img' src="/static/img/cart.jpg" alt="">
+															</span>
+														</div>
+													</div>
+													<div class='center'>
+														<div>
+															<img style="width: 98%" src="/static/img/1.jpeg" alt="">
+														</div>
+														<div>草莓</div>
+														<div>
+															<span>￥30.00</span>
+															<span>28.60 / 500g</span>
+															<span>
+																<img  class='back-img' src="/static/img/cart.jpg" alt="">
+															</span>
+														</div>
+													</div>
+													<div class='center'>
+														<div>
+															<img style="width: 98%" src="/static/img/1.jpeg" alt="">
+														</div>
+														<div>草莓</div>
+														<div>
+															<span>￥30.00</span>
+															<span>28.60 / 500g</span>
+															<span>
+																<img  class='back-img' src="/static/img/cart.jpg" alt="">
+															</span>
+														</div>
+													</div>
+													<div class='center'>
+														
+														<div>
+															<img style="width: 98%" src="/static/img/1.jpeg" alt="">
+														</div>
+														<div>草莓</div>
+														<div>
+															<span>￥30.00</span>
+															<span>28.60 / 500g</span>
+															<span>
+																<img  class='back-img' src="/static/img/cart.jpg" alt="">
+															</span>
+														</div>
+													</div>
+												</div>
+
+													</div>
+												</i-col>
+											</Row>
+									    </Card>
+									<i-col>
+										
+								</Row>
+							</div>
+						</div>
+					</i-col>
+				</Row>
+			</i-col>
+		</Row>
+	</div>
+</body>
+</html>
+
+<script>
+	new Vue({
+		el: '#app',
+		data:{
+			search: '' // 搜索功能
+		},
+		methods: {},
+		mounted () {}
+	})
+</script>

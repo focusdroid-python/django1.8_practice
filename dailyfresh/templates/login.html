@@ -15,24 +15,27 @@
 </head>
 <body>
 	<div id="app">
-		<i-row>
+		<Row>
 			<i-col :span='24'>
 				用户名：
-				<i-input v-model="username" placeholder="Enter something..." style="width: 300px" />
+				<i-input v-model.trim="username" placeholder="用户名" style="width: 300px" />
 			</i-col>
 			<i-col :span='24'>
 				密码：
-				<i-input v-model="passwd" placeholder="Enter something..." style="width: 300px" />
+				<i-input v-model.trim="passwd" placeholder="密码" style="width: 300px" />
 			</i-col>
 			<i-col :span='24'>
-				<Checkbox v-model="rempasswd">记住密码</Checkbox>
+				<Checkbox v-model.trim="rempasswd">记住密码</Checkbox>
+			</i-col>
+			<i-col :span='24'>
+
 			</i-col>
 			<i-col :span='24'>
 				<i-button type="success" long style="width: 300px" @click='login'>登录</i-button>
 			</i-col>
-			<i-col :span='24'>
-			</i-col>
-		</i-row>
+			{{errmsg}}
+
+		</Row>
 	</div>
 </body>
 </html>
@@ -43,17 +46,26 @@
 	new Vue({
 		el: '#app',
 		data:{
-			username: '123',
+			username: '',
 			passwd: '',
 			rempasswd: false
 		},
 		mounted () {},
 		methods: {
 			login () {
-				axios.get('http://api.github.com').then((res) => {
-					console.log(res)
+				axios.post('/user/login', {
+				    username: this.username,
+				    passwd: this.passwd,
+				    rempasswd: this.rempasswd
+                }).then((res) => {
+					// console.log(res)
+                    if (res.data.status === 'success') {
+                        window.location.replace('/')
+                    } else {
+                        this.$Message.info(res.data.msg)
+                    }
 				})
 			}
 		}
-	}).mount
+	})
 </script>

@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect
-# from django.core.urlresolvers import reverse # 处理前后端未分离的跳转
+from django.core.urlresolvers import reverse # 处理前后端未分离的跳转
 from django.views.decorators.csrf import csrf_exempt  # 处理csrf报错 @csrf_exempt
 from django.http import HttpResponse, JsonResponse  # 处理返回数据
 from django.core.mail import send_mail
 from django.conf import settings  # 使用其中 SECRET_KEY 作为密钥  使用其中的send_mail配置
+from django.contrib.auth import authenticate, login, logout
+from utils.mixin import LoginRequiredMixin
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
-from user.models import User
+from user.models import User, Address
 import re
 import json
 from celery_tasks.tasks import send_register_active_email
@@ -189,6 +191,9 @@ def active(request, token):
 # def login(request):
 #     '''显示登录页面'''
 #     return render(request, 'login.html')
+
+
+# 前后端未分离写法
 class LoginView(View):
     '''登录的类视图'''
 
@@ -196,8 +201,215 @@ class LoginView(View):
         '''显示登录页面'''
         return render(request, 'login.html')
 
+    @csrf_exempt
+    def post(self, request):
+        '''登录校验'''
+        # 接受数据
+        data = json.loads(request.body.decode())
+        username = data.get('username')
+        password = data.get('passwd')
+        rempasswd = data.get('rempasswd')
+        # 校验数据
+        if not all([username, password]):
+            return render(request, 'login.html', {'errmsg': '数据不完整'})
+        # 业务处理，登录校验
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            # 用户名密码正确
+            if user.is_active:
+                # 用户已激活
+                # 记录用户的状态
+                login(request, user)
+
+                response = redirect(reverse('goods:index'))
+                # 判断是否需要记住用户名
+                print(rempasswd)
+                print(rempasswd == True)
+                if rempasswd == True:
+                    # 记住用户名
+                    response.set_cookie('username', username, max_age=7*24*3600)
+                else:
+                    response.delete_cookie('username')
+
+                # return redirect('user:user')
+                return JsonResponse({"status": "success", "msg": "登陆成功"}
+)
+            else:
+                return render(request, 'login.html', {'errmsg': '账户未激活'})
+        else:
+            # 用户名密码错误
+            return render(request, 'login.html', {'errmsg':'用户名密码错误'})
 
 
+        # 返回应答
+
+# 前后端分写法
+# class LoginView(View):
+#     '''登录的类视图'''
+#
+#     def get(self, request):
+#         '''显示登录页面'''
+#         if 'username' in request.COOKIES: #根据cooki自动填充
+#             username = request.COOKIES.get('username')
+#             print(username)
+#         else:
+#             username = ''
+#             return render(request, 'login.html')
+#
+#     @csrf_exempt
+#     def post(self, request):
+#         '''登录校验'''
+#         # 接受数据
+#         data = json.loads(request.body.decode())
+#         username = data.get('username')
+#         passwd = data.get('passwd')
+#         rempasswd = data.get('rempasswd')
+#         # 校验数据
+#         if not all([username, passwd]):
+#             result = {"status": "error", "msg": "请将用户名和密码填写完整"}
+#             return JsonResponse(result)
+#
+#         # 业务处理
+#         user = authenticate(username=username, password=passwd) # redis记住登录状态
+#         if user is not None:
+#             # 用户名密码正确
+#             if user.is_active:
+#                 # 用户已激活
+#                 # 使用redis记住用户登录状态
+#                 print(user)
+#                 # login(request, user) # redis连接还有点问题
+#                 # next_url = request.GET.get('next', reverse('goods:index'))
+#                 # response = redirect(next_url)
+#
+#                 # 判断是否需要记住用户名
+#                 response = HttpResponse() # 使用response设置cookie
+#                 if rempasswd == True: # 前端做存储
+#                     # 记住用户名
+#                     response.set_cookie('username', username, max_age=7 * 24 * 3600)
+#                 else:
+#                     response.delete_cookie('username')
+#
+#                 success_active = {"status": "success", "msg": "登陆成功"}
+#                 return JsonResponse(success_active)
+#
+#             else:
+#                 # 用户未激活
+#                 no_active = {"status": 'error', "msg": '请先激活账户'}
+#                 return JsonResponse(no_active)
+#         else:
+#             # 用户名密码错误
+#             err_user = {"status": 'error', "msg": '用户名或者密码错误'}
+#             return JsonResponse(err_user)
+#
+#
+#         # 返回应答
+
+# /user/logout
+class LogoutView(View):
+    '''退出登录'''
+    def get(self, request):
+        logout(request)
+        # 用户退出之后，跳转到首页
+        return redirect(reversed('goods:index'))
+
+
+
+# 登录判断是否在有效期
+# # /user
+# class UserInfoView(LoginRequiredMixin, View):
+#     '''用户中心-信息页'''
+#     def get(self, request):
+#         '''显示'''
+#         return render(request, 'user_center_info.html')
+# # /user/order
+# class UserOrderView(LoginRequiredMixin, View):
+#     '''用户中心-订单页面'''
+#     def get(self, request):
+#         '''显示订单页面'''
+#         return render(request, 'user_center_order.html')
+# # /user/address
+# class AddressView(LoginRequiredMixin, View):
+#     '''地址信息页'''
+#     def get(self, request):
+#         '''显示地址页面'''
+#         return render(request, 'user_center_address.html')
+# /user
+class UserInfoView(View):
+    '''用户中心-信息页'''
+    def get(self, request):
+        '''显示'''
+        # request.user.is_authenticated()
+        # django会给request对象添加一个属性request.user
+        # 用户未登录->user是AnonymouseUser类的一个实例
+        # 用户登录->user是user类的一个实例
+        # request.user.is_authenticated()
+
+        # 获取用户的个人信息
+
+        # 获取用户的浏览记录
+
+        # 处理你本身给模板文件传递的变量之外，django会把request.user自动传递给用户
+        print(request.user)
+        print(request.user.is_authenticated)
+        return render(request, 'user.html')
+
+# /user/order
+class UserOrderView(View):
+    '''用户中心-订单页面'''
+    def get(self, request):
+        '''显示订单页面'''
+        return render(request, 'order.html')
+
+# /user/address
+class AddressView(LoginRequiredMixin, View):
+    '''地址信息页'''
+    def get(self, request):
+        '''显示地址页面'''
+        user = request.user
+        address = Address.objects.get_default_address(user)
+        # try:
+        #     address = Address.objects.get(user=user, is_default=True)
+        # except Address.DoesNotExist:
+        #     # 不存在默认收货地址
+        #     address = None
+        return render(request, 'address.html', {'page':'address', 'address':address})
+
+    def post(self, request):
+        '''添加地址'''
+        # 接受地址
+        data = json.loads(request.body.decode())
+        name = data.get('name')
+        addr = data.get('addr')
+        zipCode = data.get('zipCode')
+        phone = data.get('phone')
+
+        if not all([name, addr, phone]):
+            return render(request, 'address.html', {'errmsg':'数据不完整'})
+
+        # 校验数据
+        if not re.match(r'^1[3|4|5|7|8][0-9]{9}', phone):
+            return render(request, 'address.html', {'errmeg':'手机号码不符合规范'})
+        # 业务处理：地址添加
+        # 获取登录用户对应的User对象
+        user = request.user
+
+        address = Address.objects.get_default_address(user)
+        # try:
+        #     address = Address.objects.get(user=user, is_default=True)
+        # except Address.DoesNotExist:
+        #     # 不存在默认收货地址
+        #     address = None
+
+        if address:
+            is_default = False
+        else:
+            is_default = True
+
+        # 添加数据
+        Address.objects.create(user=user, receiver=name, addr=addr, zip_code=zipCode, phone=phone, is_default=is_default)
+
+        # 返回应答,刷新页面
+        return redirect(reverse('user:address'))
 
 
 
