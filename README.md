@@ -1053,7 +1053,10 @@ sudo make install
 个人习惯：
     ps -ef | grep redis 查看redis服务器进程
     sudo kill -9 pid 杀死redis服务器
+
+以后就启动redis
     sudo redis-server /etc/redis/redis.conf 指定加载的配置文件
+    redis-cli -h 192.168.1.104
 ```
 ## redis客户端
 ```
